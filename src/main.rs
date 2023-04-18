@@ -1,3 +1,4 @@
+mod controller;
 mod server;
 
 fn main() -> std::io::Result<()> {
