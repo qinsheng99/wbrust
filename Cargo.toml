@@ -10,3 +10,5 @@ actix-web = "4"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 postgres = "0.19.2"
+mime = "0.3.17"
+http = "0.2.9"
