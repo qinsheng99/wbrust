@@ -1,6 +1,7 @@
 mod common;
 mod controller;
 mod server;
+mod utils;
 
 fn main() -> std::io::Result<()> {
     server::server(("192.168.1.218", 9000), "v1")

@@ -1,5 +1,5 @@
+use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-
 // #[derive(Debug)]
 pub struct ErrorMsg(String);
 
@@ -14,6 +14,12 @@ impl Display for ErrorMsg {
 impl Debug for ErrorMsg {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("err_msg").field("err", &self.0).finish()
+    }
+}
+
+impl Error for ErrorMsg {
+    fn description(&self) -> &str {
+        self.0.as_str()
     }
 }
 

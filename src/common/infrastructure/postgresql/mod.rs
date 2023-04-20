@@ -1,8 +1,9 @@
-use crate::common::util::{ErrorMsg, Result};
+use crate::utils::error::{ErrorMsg, Result};
 use postgres::{Client, NoTls};
+use std::{error::Error, result::Result as libResult};
 
 #[allow(dead_code)]
-pub fn pg_connect() -> Result<Client> {
+fn pg_connect() -> Result<Client> {
     if let Ok(url) = std::env::var("PG_URL") {
         let conn = Client::connect(url.as_str(), NoTls).unwrap();
 
@@ -10,4 +11,11 @@ pub fn pg_connect() -> Result<Client> {
     }
 
     Err(ErrorMsg::new("failed connect"))
+}
+
+#[allow(dead_code)]
+pub fn init() -> libResult<Client, Box<dyn Error>> {
+    let cli = pg_connect()?;
+
+    Ok(cli)
 }
