@@ -1,5 +1,7 @@
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
+use std::process;
+
 // #[derive(Debug)]
 pub struct ErrorMsg(String);
 
@@ -33,4 +35,21 @@ impl ErrorMsg {
     pub fn set_err(&mut self, data: &str) {
         self.0 = data.to_string()
     }
+}
+
+#[allow(dead_code)]
+pub fn err(msg: &str) {
+    println!("{}", msg);
+
+    process::exit(1)
+}
+
+#[allow(dead_code)]
+pub fn err_msg<T>(msg: &str, err: T)
+where
+    T: Display + Sized,
+{
+    println!("{}, err: {}", msg, err);
+
+    process::exit(1)
 }

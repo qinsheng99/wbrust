@@ -1,11 +1,18 @@
+use serde::Deserialize;
 use std::error::Error;
 use std::fs;
 
 #[allow(dead_code)]
-fn read_file(path: &'static str) -> Result<(String, Vec<u8>), Box<dyn Error>> {
+pub(crate) fn read_file(path: &'static str) -> Result<String, Box<dyn Error>> {
     let content = fs::read_to_string(path)?;
 
-    let bys = fs::read(path)?;
+    Ok(content)
+}
 
-    Ok((content, bys))
+#[allow(dead_code)]
+pub fn read_file_to_yaml<'a, T: Deserialize<'a>>(content: &'a str) -> Result<(), Box<dyn Error>> {
+    match serde_yaml::from_str::<'a, T>(content) {
+        Ok(_s) => Ok(()),
+        Err(e) => Err(Box::new(e)),
+    }
 }
