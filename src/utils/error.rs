@@ -1,9 +1,9 @@
-use std::error::Error;
+use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
 use std::process;
 
 // #[derive(Debug)]
-pub struct ErrorMsg(Box<dyn Error>);
+pub struct ErrorMsg(Box<dyn libError>);
 
 #[derive(Debug)]
 struct ErrorStr(String);
@@ -22,7 +22,7 @@ impl Debug for ErrorMsg {
     }
 }
 
-impl Error for ErrorMsg {
+impl libError for ErrorMsg {
     fn description(&self) -> &str {
         "error msg"
     }
@@ -34,7 +34,7 @@ impl Display for ErrorStr {
     }
 }
 
-impl Error for ErrorStr {
+impl libError for ErrorStr {
     fn description(&self) -> &str {
         self.0.as_str()
     }
@@ -47,7 +47,7 @@ impl ErrorMsg {
     }
 
     #[allow(dead_code)]
-    pub fn set_err(&mut self, data: Box<dyn Error>) {
+    pub fn set_err(&mut self, data: Box<dyn libError>) {
         self.0 = data
     }
 }
