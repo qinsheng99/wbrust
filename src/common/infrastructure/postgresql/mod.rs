@@ -10,7 +10,7 @@ fn pg_connect() -> Result<Client> {
         return Ok(conn);
     }
 
-    Err(ErrorMsg::new("failed connect"))
+    Err(ErrorMsg::new(String::from("no pg connect url")))
 }
 
 #[allow(dead_code)]
