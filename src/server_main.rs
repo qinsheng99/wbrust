@@ -37,7 +37,7 @@ lazy_static! {
         let args = Args::parse();
         let path = args
             .config_file
-            .unwrap_or(String::from("local_config/config.toml"));
+            .unwrap_or(String::from("config/config.toml"));
         let server_config = LocalConfig::new(&path);
         server_config.config
     };
