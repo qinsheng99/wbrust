@@ -1,14 +1,18 @@
+use config::ConfigError;
 use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
+use std::io::Error as IoError;
 use std::process;
+use std::sync::PoisonError;
+use thiserror::Error as ThisError;
 
-// #[derive(Debug)]
+#[derive(Debug)]
 pub struct ErrorMsg(Box<dyn libError>);
 
 #[derive(Debug)]
 struct ErrorStr(String);
 
-pub type Result<T> = std::result::Result<T, ErrorMsg>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 impl Display for ErrorMsg {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -16,11 +20,11 @@ impl Display for ErrorMsg {
     }
 }
 
-impl Debug for ErrorMsg {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("err_msg").field("err", &self.0).finish()
-    }
-}
+// impl Debug for ErrorMsg {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+//         f.debug_struct("err_msg").field("err", &self.0).finish()
+//     }
+// }
 
 impl libError for ErrorMsg {
     fn description(&self) -> &str {
@@ -67,4 +71,37 @@ where
     println!("{}, err: {}", msg, err);
 
     process::exit(1)
+}
+
+#[derive(Debug, Clone, ThisError)]
+pub enum Error {
+    #[error("failed to IO error. {0}")]
+    IOError(String),
+
+    #[error("failed to database error. {0}")]
+    DataBaseError(String),
+
+    #[error("failed to poison error. {0}")]
+    PoisonError(String),
+
+    #[error("failed to configuration error. {0}")]
+    ConfigError(String),
+}
+
+impl From<IoError> for Error {
+    fn from(v: IoError) -> Self {
+        Error::IOError(v.to_string())
+    }
+}
+
+impl<T> From<PoisonError<T>> for Error {
+    fn from(v: PoisonError<T>) -> Self {
+        Error::PoisonError(v.to_string())
+    }
+}
+
+impl From<ConfigError> for Error {
+    fn from(v: ConfigError) -> Self {
+        Error::ConfigError(v.to_string())
+    }
 }

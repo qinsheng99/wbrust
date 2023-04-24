@@ -1,8 +1,7 @@
 use crate::utils::file::{read_file, read_file_to_yaml};
-use config::{Config as libConfig, File, FileFormat};
+use config::{Config as Cfg, File, FileFormat};
 use serde::{Deserialize, Serialize};
 use serde_with_expand_env::with_expand_envs;
-use std::error::Error;
 use std::sync::{Arc, RwLock};
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
@@ -21,6 +20,7 @@ impl ConfigImpl for Config {
     }
 }
 
+#[allow(dead_code)]
 pub fn load_config(path: &str) -> Arc<Config> {
     let content = read_file(path).expect("read file failed");
 
@@ -28,13 +28,14 @@ pub fn load_config(path: &str) -> Arc<Config> {
 }
 
 pub struct LocalConfig {
+    #[allow(dead_code)]
     path: String,
-    pub config: Arc<RwLock<libConfig>>,
+    pub config: Arc<RwLock<Cfg>>,
 }
 
 impl LocalConfig {
     pub fn new(path: &str) -> LocalConfig {
-        let cfg = libConfig::builder()
+        let cfg = Cfg::builder()
             .add_source(File::new(path, FileFormat::Toml))
             .build()
             .expect("load file failed");

@@ -1,6 +1,5 @@
-use crate::utils::error::{ErrorMsg, Result};
+use crate::utils::error::{Error as localError, Result};
 use postgres::{Client, NoTls};
-use std::{error::Error, result::Result as libResult};
 
 #[allow(dead_code)]
 fn pg_connect() -> Result<Client> {
@@ -10,11 +9,11 @@ fn pg_connect() -> Result<Client> {
         return Ok(conn);
     }
 
-    Err(ErrorMsg::new(String::from("no pg connect url")))
+    Err(localError::DataBaseError(String::from("no connect url")))
 }
 
 #[allow(dead_code)]
-pub fn init() -> libResult<Client, Box<dyn Error>> {
+pub fn init() -> Result<Client> {
     let cli = pg_connect()?;
 
     Ok(cli)

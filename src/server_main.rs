@@ -1,11 +1,14 @@
 use clap::Parser;
 
+use config::Config;
 use lazy_static::lazy_static;
 #[allow(unused_imports)]
-use local_config::{load_config, ConfigImpl, LocalConfig};
+use local_config::LocalConfig;
 use log::info;
+use server::Server;
 use std::sync::{Arc, RwLock};
-use utils::error::err;
+use tokio;
+use utils::error::Result;
 
 extern crate lazy_static;
 
@@ -30,23 +33,24 @@ pub struct Args {
 }
 
 lazy_static! {
-    pub static ref SERVERCONFIG: Arc<RwLock<LocalConfig>> = {
+    pub static ref SERVERCONFIG: Arc<RwLock<Config>> = {
         let args = Args::parse();
-        let path = Args.config_file.unwrap_or("local_config/config.toml");
-        let server_config = util::config::ServerConfig::new(path);
+        let path = args
+            .config_file
+            .unwrap_or(String::from("local_config/config.toml"));
+        let server_config = LocalConfig::new(&path);
         server_config.config
     };
 }
 
-async fn main() -> () {
+#[tokio::main]
+async fn main() -> Result<()> {
     env_logger::init();
 
-    let path = Args.config_file.unwrap_or("config.yaml");
+    info!("start wb server");
 
-    let _cfg = load_config(path.as_str());
+    let ser = Server::new(SERVERCONFIG.clone()).await?;
+    ser.run("v1").await?;
 
-    info!("start server {}:{}", args.address, args.port);
-
-    ()
-    // server::server((args.address, args.port), "v1")
+    Ok(())
 }
