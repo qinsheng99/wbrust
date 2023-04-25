@@ -1,7 +1,9 @@
 use config::ConfigError;
+use sqlx::error::Error as SqlxError;
 use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
 use std::io::Error as IoError;
+use std::num::{ParseFloatError, ParseIntError};
 use std::process;
 use std::sync::PoisonError;
 use thiserror::Error as ThisError;
@@ -86,6 +88,9 @@ pub enum Error {
 
     #[error("failed to configuration error. {0}")]
     ConfigError(String),
+
+    #[error("failed to convent error. {0}")]
+    ConventError(String),
 }
 
 impl From<IoError> for Error {
@@ -103,5 +108,23 @@ impl<T> From<PoisonError<T>> for Error {
 impl From<ConfigError> for Error {
     fn from(v: ConfigError) -> Self {
         Error::ConfigError(v.to_string())
+    }
+}
+
+impl From<SqlxError> for Error {
+    fn from(v: SqlxError) -> Self {
+        Error::DataBaseError(v.to_string())
+    }
+}
+
+impl From<ParseIntError> for Error {
+    fn from(v: ParseIntError) -> Self {
+        Error::ConventError(v.to_string())
+    }
+}
+
+impl From<ParseFloatError> for Error {
+    fn from(v: ParseFloatError) -> Self {
+        Error::ConventError(v.to_string())
     }
 }

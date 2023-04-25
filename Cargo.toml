@@ -22,6 +22,10 @@ config = "0.13.3"
 tokio = {version = "1.21.2", features = ["rt-multi-thread", "fs", "sync","full","macros","rt"]}
 lazy_static = "1.4.0"
 thiserror = "1.0.38"
+once_cell = "1.17.1"
+sqlx = {version ="0.6.3", features = ["postgres","migrate","runtime-tokio-rustls","chrono"]}
+uuid = { version = "0.8.2", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
 
 [[bin]]
 name = "server"

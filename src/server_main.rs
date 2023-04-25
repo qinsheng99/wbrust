@@ -1,8 +1,8 @@
 use clap::Parser;
 
+use crate::common::infrastructure::postgresql::init_db;
 use config::Config;
 use lazy_static::lazy_static;
-#[allow(unused_imports)]
 use local_config::LocalConfig;
 use log::info;
 use server::Server;
@@ -12,8 +12,11 @@ use utils::error::Result;
 
 extern crate lazy_static;
 
+mod app;
 mod common;
 mod controller;
+mod domain;
+mod infrastructure;
 mod local_config;
 mod server;
 mod utils;
@@ -37,7 +40,7 @@ lazy_static! {
         let args = Args::parse();
         let path = args
             .config_file
-            .unwrap_or(String::from("config/config.toml"));
+            .unwrap_or(String::from("/root/project/wbrust/src/config/config.toml"));
         let server_config = LocalConfig::new(&path);
         server_config.config
     };
@@ -47,8 +50,9 @@ lazy_static! {
 async fn main() -> Result<()> {
     env_logger::init();
 
-    info!("start wb server");
+    init_db(SERVERCONFIG.clone()).await?;
 
+    info!("start wb server");
     let ser = Server::new(SERVERCONFIG.clone()).await?;
     ser.run("v1").await?;
 
