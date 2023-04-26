@@ -91,6 +91,17 @@ pub enum Error {
 
     #[error("failed to convent error. {0}")]
     ConventError(String),
+
+    #[error("")]
+    #[allow(dead_code)]
+    None(String),
+}
+
+impl Error {
+    #[allow(dead_code)]
+    pub fn default() -> Self {
+        Error::None("".to_string())
+    }
 }
 
 impl From<IoError> for Error {

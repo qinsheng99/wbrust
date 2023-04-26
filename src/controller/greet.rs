@@ -33,30 +33,34 @@ pub fn scope() -> Vec<Resource> {
 struct Greet {
     pub code: u16,
     pub data: String,
+    pub msg: String,
 }
 
 impl Greet {
     #[allow(dead_code)]
     fn default() -> Self {
         Greet {
-            data: String::new(),
             code: StatusCode::default().as_u16(),
+            data: String::new(),
+            msg: String::new(),
         }
     }
 
     #[allow(dead_code)]
     fn new_success(data: &str) -> Self {
         Greet {
-            data: data.to_string(),
             code: StatusCode::OK.as_u16(),
+            data: data.to_string(),
+            msg: String::new(),
         }
     }
 
     #[allow(dead_code)]
-    fn new(data: &str, code: u16) -> Self {
+    fn new(data: &str, code: u16, msg: &str) -> Self {
         Greet {
-            data: data.to_string(),
             code,
+            data: data.to_string(),
+            msg: msg.to_string(),
         }
     }
 
@@ -79,6 +83,7 @@ impl Serialize for Greet {
         let mut s = serializer.serialize_struct("Greet", 1)?;
         s.serialize_field("code", &self.code)?;
         s.serialize_field("data", &self.data)?;
+        s.serialize_field("msg", &self.msg)?;
         s.end()
     }
 }

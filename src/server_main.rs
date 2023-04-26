@@ -1,9 +1,9 @@
 use clap::Parser;
 
 use crate::common::infrastructure::postgresql::init_db;
+use cfg::LocalConfig;
 use config::Config;
 use lazy_static::lazy_static;
-use cfg::LocalConfig;
 use log::info;
 use server::Server;
 use std::sync::{Arc, RwLock};
@@ -13,11 +13,11 @@ use utils::error::Result;
 extern crate lazy_static;
 
 mod app;
+mod cfg;
 mod common;
 mod controller;
 mod domain;
 mod infrastructure;
-mod cfg;
 mod server;
 mod utils;
 
