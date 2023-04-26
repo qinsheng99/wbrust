@@ -3,7 +3,6 @@ use clap::Parser;
 use crate::common::infrastructure::postgresql::init_db;
 use config::Config;
 use lazy_static::lazy_static;
-use local_config::LocalConfig;
 use cfg::LocalConfig;
 use log::info;
 use server::Server;
