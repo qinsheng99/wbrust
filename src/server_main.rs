@@ -4,6 +4,7 @@ use crate::common::infrastructure::postgresql::init_db;
 use config::Config;
 use lazy_static::lazy_static;
 use local_config::LocalConfig;
+use cfg::LocalConfig;
 use log::info;
 use server::Server;
 use std::sync::{Arc, RwLock};
@@ -17,7 +18,7 @@ mod common;
 mod controller;
 mod domain;
 mod infrastructure;
-mod local_config;
+mod cfg;
 mod server;
 mod utils;
 
