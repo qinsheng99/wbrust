@@ -17,7 +17,7 @@ async fn post_greet(name: web::Path<String>) -> impl Responder {
 }
 
 #[allow(dead_code)]
-pub fn score() -> Vec<Resource> {
+pub fn scope() -> Vec<Resource> {
     let mut r: Vec<Resource> = vec![];
 
     r.push(
