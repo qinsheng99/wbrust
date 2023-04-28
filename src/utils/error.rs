@@ -1,4 +1,6 @@
+use actix_web::{HttpResponse, ResponseError};
 use config::ConfigError;
+use serde::{Deserialize, Serialize};
 use sqlx::error::Error as SqlxError;
 use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
@@ -7,6 +9,7 @@ use std::num::{ParseFloatError, ParseIntError};
 use std::process;
 use std::sync::PoisonError;
 use thiserror::Error as ThisError;
+use uuid::Error as uuidError;
 
 #[derive(Debug)]
 pub struct ErrorMsg(Box<dyn libError>);
@@ -92,6 +95,15 @@ pub enum Error {
     #[error("failed to convent error. {0}")]
     ConventError(String),
 
+    #[error("failed to uuid param error. {0}")]
+    UUIDError(String),
+
+    #[error("failed to parse date time error. {0}")]
+    DateError(String),
+
+    #[error("failed to param error. {0}")]
+    ParamError(String),
+
     #[error("")]
     #[allow(dead_code)]
     None(String),
@@ -137,5 +149,40 @@ impl From<ParseIntError> for Error {
 impl From<ParseFloatError> for Error {
     fn from(v: ParseFloatError) -> Self {
         Error::ConventError(v.to_string())
+    }
+}
+
+impl From<uuidError> for Error {
+    fn from(v: uuidError) -> Self {
+        Error::UUIDError(v.to_string())
+    }
+}
+
+impl From<&str> for Error {
+    fn from(v: &str) -> Self {
+        Error::None(v.to_string())
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ResponseErr {
+    msg: String,
+}
+
+// impl Display for ResponseErr {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+//         write!(f, "{}", self.msg)
+//     }
+// }
+
+impl ResponseError for Error {
+    fn error_response(&self) -> HttpResponse {
+        match self {
+            Error::DataBaseError(_) => HttpResponse::BadRequest().json(ResponseErr {
+                msg: self.to_string(),
+            }),
+
+            _ => HttpResponse::BadRequest().finish(),
+        }
     }
 }

@@ -1,5 +1,6 @@
 pub mod error;
 pub mod file;
+pub mod time;
 
 use regex::Regex;
 use std::fmt::{Display, Formatter};

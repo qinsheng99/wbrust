@@ -5,43 +5,36 @@ use serde::{Deserialize, Serialize, Serializer};
 use serde_json::Result as SerdeResult;
 
 #[derive(Deserialize)]
-pub struct Response {
+pub struct Response<T>
+where
+    T: Serialize,
+{
     pub code: u16,
-    pub data: String,
+    pub data: T,
     pub msg: String,
 }
 
-pub trait ResponseT {
-    fn default() -> Self;
-    fn new_success(data: &str) -> Self;
-    fn new(data: &str, code: u16, msg: &str) -> Self;
+pub trait ResponseT<T> {
+    fn new_success(data: T) -> Self;
+    fn new(data: T, code: u16, msg: &str) -> Self;
     fn response_ok(&self) -> HttpResponse;
 }
 
-impl ResponseT for Response {
+impl<T: Serialize> ResponseT<T> for Response<T> {
     #[allow(dead_code)]
-    fn default() -> Self {
-        Response {
-            code: StatusCode::default().as_u16(),
-            data: String::new(),
-            msg: String::new(),
-        }
-    }
-
-    #[allow(dead_code)]
-    fn new_success(data: &str) -> Self {
+    fn new_success(data: T) -> Self {
         Response {
             code: StatusCode::OK.as_u16(),
-            data: data.to_string(),
+            data,
             msg: String::new(),
         }
     }
 
     #[allow(dead_code)]
-    fn new(data: &str, code: u16, msg: &str) -> Self {
+    fn new(data: T, code: u16, msg: &str) -> Self {
         Response {
             code,
-            data: data.to_string(),
+            data,
             msg: msg.to_string(),
         }
     }
@@ -53,22 +46,22 @@ impl ResponseT for Response {
     }
 }
 
-impl Response {
+impl<T: Serialize> Response<T> {
     #[allow(dead_code)]
     fn json_marshal(&self) -> SerdeResult<String> {
         serde_json::to_string(&self)
     }
 
     #[allow(dead_code)]
-    fn json_unmarshal(s: &[u8]) -> SerdeResult<Self> {
+    fn json_unmarshal<'a, S: Deserialize<'a>>(s: &'a [u8]) -> SerdeResult<S> {
         serde_json::from_slice(s)
     }
 }
 
-impl Serialize for Response {
-    fn serialize<T>(&self, serializer: T) -> Result<T::Ok, T::Error>
+impl<T: Serialize> Serialize for Response<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        T: Serializer,
+        S: Serializer,
     {
         let mut s = serializer.serialize_struct("Response", 1)?;
         s.serialize_field("code", &self.code)?;

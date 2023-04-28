@@ -43,3 +43,10 @@ pub async fn init_db(v: Arc<RwLock<config::Config>>) -> Result<()> {
 
     Ok(())
 }
+
+pub fn get_db() -> Result<PgDB> {
+    match DB_CLI.get() {
+        Some(db) => Ok(db.clone()),
+        None => Err(Error::DataBaseError(String::from("no db pool"))),
+    }
+}

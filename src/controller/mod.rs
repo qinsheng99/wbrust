@@ -1,4 +1,5 @@
-pub mod greet;
+mod greet;
+mod repo_info;
 
 use actix_web::{web, Scope};
 
