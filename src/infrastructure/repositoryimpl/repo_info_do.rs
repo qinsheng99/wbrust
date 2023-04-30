@@ -10,7 +10,7 @@ pub struct RepoInfoDO {
     pub branch: String,
     pub status: String,
     pub last_commit: String,
-    pub timeout: i64,
+    pub timeout: i32,
     pub modified_time: i64,
 }
 

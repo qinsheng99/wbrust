@@ -37,10 +37,12 @@ pub struct Args {
 
 lazy_static! {
     pub static ref SERVERCONFIG: Arc<RwLock<Config>> = {
+        let mut p = "/Users/zhaojiaming/Documents/project/wbrust/src/config/config.toml";
+        if cfg!(target_os = "linux") {
+            p = "/root/project/wbrust/src/config/config.toml";
+        }
         let args = Args::parse();
-        let path = args
-            .config_file
-            .unwrap_or(String::from("/root/project/wbrust/src/config/config.toml"));
+        let path = args.config_file.unwrap_or(String::from(p));
         let server_config = LocalConfig::new(&path);
         server_config.config
     };

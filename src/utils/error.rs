@@ -2,6 +2,7 @@ use actix_web::{HttpResponse, ResponseError};
 use config::ConfigError;
 use serde::{Deserialize, Serialize};
 use sqlx::error::Error as SqlxError;
+use sqlx::types::uuid::Error as SqlxUuidError;
 use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
 use std::io::Error as IoError;
@@ -9,7 +10,10 @@ use std::num::{ParseFloatError, ParseIntError};
 use std::process;
 use std::sync::PoisonError;
 use thiserror::Error as ThisError;
-use uuid::Error as uuidError;
+use uuid::Error as UuidError;
+
+const RECORD_NOT_EXIST: &'static str = "record_not_exists";
+const SYSTEM_ERROR: &'static str = "system_error";
 
 #[derive(Debug)]
 pub struct ErrorMsg(Box<dyn libError>);
@@ -86,6 +90,9 @@ pub enum Error {
     #[error("failed to database error. {0}")]
     DataBaseError(String),
 
+    #[error("record not found error")]
+    NotFound,
+
     #[error("failed to poison error. {0}")]
     PoisonError(String),
 
@@ -101,9 +108,8 @@ pub enum Error {
     #[error("failed to parse date time error. {0}")]
     DateError(String),
 
-    #[error("failed to param error. {0}")]
-    ParamError(String),
-
+    // #[error("failed to param error. {0}")]
+    // ParamError(String),
     #[error("")]
     #[allow(dead_code)]
     None(String),
@@ -136,7 +142,13 @@ impl From<ConfigError> for Error {
 
 impl From<SqlxError> for Error {
     fn from(v: SqlxError) -> Self {
-        Error::DataBaseError(v.to_string())
+        match v.as_database_error() {
+            Some(err) => Error::DataBaseError(err.to_string()),
+            None => match v {
+                SqlxError::RowNotFound => Error::NotFound,
+                _ => Error::DataBaseError(v.to_string()),
+            },
+        }
     }
 }
 
@@ -152,8 +164,14 @@ impl From<ParseFloatError> for Error {
     }
 }
 
-impl From<uuidError> for Error {
-    fn from(v: uuidError) -> Self {
+impl From<UuidError> for Error {
+    fn from(v: UuidError) -> Self {
+        Error::UUIDError(v.to_string())
+    }
+}
+
+impl From<SqlxUuidError> for Error {
+    fn from(v: SqlxUuidError) -> Self {
         Error::UUIDError(v.to_string())
     }
 }
@@ -166,6 +184,7 @@ impl From<&str> for Error {
 
 #[derive(Deserialize, Serialize)]
 pub struct ResponseErr {
+    code: &'static str,
     msg: String,
 }
 
@@ -178,11 +197,15 @@ pub struct ResponseErr {
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
         match self {
-            Error::DataBaseError(_) => HttpResponse::BadRequest().json(ResponseErr {
+            Error::NotFound => HttpResponse::BadRequest().json(ResponseErr {
+                code: RECORD_NOT_EXIST,
                 msg: self.to_string(),
             }),
 
-            _ => HttpResponse::BadRequest().finish(),
+            _ => HttpResponse::BadRequest().json(ResponseErr {
+                code: SYSTEM_ERROR,
+                msg: self.to_string(),
+            }),
         }
     }
 }

@@ -6,11 +6,11 @@ pub struct RepoService<T>
 where
     T: RepoImpl,
 {
-    s: T,
+    s: Box<T>,
 }
 
 #[async_trait]
-pub trait RepoServiceImpl {
+pub trait RepoServiceImpl: Send + Sync {
     async fn repo_info(&self, id: String) -> Result<RepoInfoDTO>;
 }
 
@@ -19,7 +19,7 @@ where
     T: RepoImpl,
 {
     #[allow(dead_code)]
-    pub fn new(s: T) -> Self {
+    pub fn new(s: Box<T>) -> Self {
         RepoService { s }
     }
 }
@@ -27,7 +27,7 @@ where
 #[async_trait]
 impl<T> RepoServiceImpl for RepoService<T>
 where
-    T: RepoImpl,
+    T: RepoImpl + Sync,
 {
     async fn repo_info(&self, id: String) -> Result<RepoInfoDTO> {
         let info = self.s.repo_detail_info(id).await?;

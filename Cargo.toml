@@ -26,6 +26,7 @@ once_cell = "1.17.1"
 sqlx = {version ="0.6.3", features = ["postgres","migrate","runtime-tokio-rustls","chrono","uuid","time"]}
 chrono = { version = "0.4", features = ["serde"] }
 async-trait = "0.1.60"
+uuid = { version = "0.8.2", features = ["v4", "serde"] }
 
 [[bin]]
 name = "server"
