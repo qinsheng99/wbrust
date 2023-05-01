@@ -15,3 +15,5 @@ Cargo.lock
 *.yaml
 
 src/config
+
+push.sh
