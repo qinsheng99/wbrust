@@ -1,5 +1,6 @@
 use actix_web::{HttpResponse, ResponseError};
 use config::ConfigError;
+use http::StatusCode;
 use serde::{Deserialize, Serialize};
 use sqlx::error::Error as SqlxError;
 use sqlx::types::uuid::Error as SqlxUuidError;
@@ -198,14 +199,22 @@ pub struct ResponseErr {
 // }
 
 impl ResponseError for Error {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            Error::NotFound => StatusCode::NOT_FOUND,
+
+            _ => StatusCode::BAD_REQUEST,
+        }
+    }
+
     fn error_response(&self) -> HttpResponse {
         match self {
-            Error::NotFound => HttpResponse::BadRequest().json(ResponseErr {
+            Error::NotFound => HttpResponse::build(self.status_code()).json(ResponseErr {
                 code: RECORD_NOT_EXIST,
                 msg: self.to_string(),
             }),
 
-            _ => HttpResponse::BadRequest().json(ResponseErr {
+            _ => HttpResponse::build(self.status_code()).json(ResponseErr {
                 code: SYSTEM_ERROR,
                 msg: self.to_string(),
             }),
