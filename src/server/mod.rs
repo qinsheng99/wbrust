@@ -1,6 +1,6 @@
-use crate::{controller as ctl, utils::error::Result};
+use crate::{common::controller::middleware::Auth, controller as ctl, utils::error::Result};
 
-use actix_web::{App, HttpServer};
+use actix_web::{middleware, App, HttpServer};
 use config::Config;
 use std::sync::{Arc, RwLock};
 
@@ -24,7 +24,12 @@ impl Server {
             self.config.read()?.get_string("port")?
         );
 
-        let http_server = HttpServer::new(move || App::new().service(ctl::get_scope(path)));
+        let http_server = HttpServer::new(move || {
+            App::new()
+                .wrap(middleware::Logger::default())
+                .wrap(Auth)
+                .service(ctl::get_scope(path))
+        });
 
         http_server.bind(address)?.run().await?;
 

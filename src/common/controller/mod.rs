@@ -1,3 +1,5 @@
+pub mod middleware;
+
 use actix_web::HttpResponse;
 use http::StatusCode;
 use serde::ser::SerializeStruct;

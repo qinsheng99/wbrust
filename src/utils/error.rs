@@ -108,6 +108,9 @@ pub enum Error {
     #[error("failed to parse date time error. {0}")]
     DateError(String),
 
+    #[error("header Auth is empty")]
+    AuthError,
+
     // #[error("failed to param error. {0}")]
     // ParamError(String),
     #[error("")]
