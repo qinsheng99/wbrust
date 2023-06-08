@@ -4,9 +4,10 @@ use crate::{
         repo_info::{RepoService, RepoServiceImpl},
     },
     common::{
-        controller::{Response, ResponseT},
+        controller::{Response, ResponseT, Str},
         infrastructure::postgresql::get_db,
     },
+    controller::repo_info_request::RepoInfoRequest,
     infrastructure::repositoryimpl::repo_info::RepoInfoImpl,
     utils::error::Result,
 };
@@ -25,6 +26,7 @@ where
 #[async_trait]
 pub trait RepoCtl: Send + Sync {
     async fn repo_datail(&self, id: String) -> Result<RepoInfoDTO>;
+    async fn add(&self, v: RepoInfoRequest) -> Result<()>;
 }
 
 impl<T> RepoController<T>
@@ -46,11 +48,21 @@ where
     async fn repo_datail(&self, id: String) -> Result<RepoInfoDTO> {
         Ok(self.service.repo_info(id).await?)
     }
+
+    async fn add(&self, v: RepoInfoRequest) -> Result<()> {
+        let cmd = v.new();
+        Ok(self.service.add(cmd).await?)
+    }
 }
 
 async fn repo_detail(id: web::Path<String>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
     let v = ctl.repo_datail(id.into_inner()).await?;
     Ok(Response::new_success(v).response_ok())
+}
+
+async fn add(v: web::Path<RepoInfoRequest>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
+    let _v = ctl.add(v.into_inner()).await?;
+    Ok(Response::new_success(Str::new("success".to_string())).response_ok())
 }
 
 #[allow(dead_code)]
@@ -62,13 +74,14 @@ pub fn scope() -> Vec<Resource> {
         )),
     )))) as Arc<dyn RepoCtl>);
 
-    let mut r: Vec<Resource> = vec![];
-
-    r.push(
+    let r: Vec<Resource> = vec![
         web::resource("/repo/{id}")
             .app_data(repo_ctl.clone())
             .route(web::get().to(repo_detail)),
-    );
+        web::resource("/repo")
+            .app_data(repo_ctl.clone())
+            .route(web::post().to(add)),
+    ];
 
     r
 }

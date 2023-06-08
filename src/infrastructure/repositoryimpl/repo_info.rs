@@ -29,4 +29,6 @@ impl RepoImpl for RepoInfoImpl {
 
         Ok(RepoInfo::from(v))
     }
+
+    // async fn
 }

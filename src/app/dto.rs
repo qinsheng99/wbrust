@@ -35,3 +35,11 @@ impl RepoInfoDTO {
         })
     }
 }
+
+#[derive(Clone)]
+pub struct CmdToRepoInfo {
+    pub owner: String,
+    pub repo: String,
+    pub branch: String,
+    pub commit: String,
+}

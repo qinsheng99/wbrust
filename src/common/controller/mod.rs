@@ -16,6 +16,15 @@ where
     pub msg: String,
 }
 
+#[derive(Serialize)]
+pub struct Str(String);
+
+impl Str {
+    pub fn new(s: String) -> Self {
+        Str(s)
+    }
+}
+
 pub trait ResponseT<T> {
     fn new_success(data: T) -> Self;
     fn new(data: T, code: u16, msg: &str) -> Self;

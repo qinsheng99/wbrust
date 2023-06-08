@@ -1,4 +1,8 @@
-use crate::{app::dto::RepoInfoDTO, domain::repo_info::RepoImpl, utils::error::Result};
+use crate::{
+    app::dto::{CmdToRepoInfo, RepoInfoDTO},
+    domain::repo_info::RepoImpl,
+    utils::error::Result,
+};
 use async_trait::async_trait;
 
 #[derive(Debug)]
@@ -12,6 +16,7 @@ where
 #[async_trait]
 pub trait RepoServiceImpl: Send + Sync {
     async fn repo_info(&self, id: String) -> Result<RepoInfoDTO>;
+    async fn add(&self, v: CmdToRepoInfo) -> Result<()>;
 }
 
 impl<T> RepoService<T>
@@ -33,5 +38,9 @@ where
         let info = self.s.repo_detail_info(id).await?;
 
         RepoInfoDTO::from(info)
+    }
+
+    async fn add(&self, _v: CmdToRepoInfo) -> Result<()> {
+        Ok(())
     }
 }
