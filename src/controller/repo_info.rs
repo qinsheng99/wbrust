@@ -50,7 +50,7 @@ where
     }
 
     async fn add(&self, v: RepoInfoRequest) -> Result<()> {
-        let cmd = v.new();
+        let cmd = v.to_cmd();
         Ok(self.service.add(cmd).await?)
     }
 }

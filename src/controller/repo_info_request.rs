@@ -10,7 +10,7 @@ pub struct RepoInfoRequest {
 }
 
 impl RepoInfoRequest {
-    pub fn new(&self) -> CmdToRepoInfo {
+    pub fn to_cmd(&self) -> CmdToRepoInfo {
         CmdToRepoInfo {
             owner: self.owner.clone(),
             repo: self.repo.clone(),
