@@ -40,7 +40,7 @@ where
         RepoInfoDTO::from(info)
     }
 
-    async fn add(&self, _v: CmdToRepoInfo) -> Result<()> {
-        Ok(())
+    async fn add(&self, v: CmdToRepoInfo) -> Result<()> {
+        Ok(self.s.add(v).await?)
     }
 }

@@ -4,6 +4,7 @@ use http::StatusCode;
 use serde::{Deserialize, Serialize};
 use sqlx::error::Error as SqlxError;
 use sqlx::types::uuid::Error as SqlxUuidError;
+use std::convert::Infallible;
 use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
 use std::io::Error as IoError;
@@ -112,6 +113,9 @@ pub enum Error {
     #[error("header Auth is empty")]
     AuthError,
 
+    #[error("parse error. {0}")]
+    ParseError(String),
+
     // #[error("failed to param error. {0}")]
     // ParamError(String),
     #[error("")]
@@ -129,6 +133,12 @@ impl Error {
 impl From<IoError> for Error {
     fn from(v: IoError) -> Self {
         Error::IOError(v.to_string())
+    }
+}
+
+impl From<Infallible> for Error {
+    fn from(v: Infallible) -> Self {
+        Error::ParseError(v.to_string())
     }
 }
 

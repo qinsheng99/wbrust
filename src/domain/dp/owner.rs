@@ -10,6 +10,7 @@ impl OwnerT for Owner {
     }
 }
 
+#[allow(dead_code)]
 pub fn new(o: String) -> Box<dyn OwnerT> {
     Box::new(Owner(o))
 }

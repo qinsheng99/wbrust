@@ -60,7 +60,7 @@ async fn repo_detail(id: web::Path<String>, ctl: web::Data<dyn RepoCtl>) -> Resu
     Ok(Response::new_success(v).response_ok())
 }
 
-async fn add(v: web::Path<RepoInfoRequest>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
+async fn add(v: web::Json<RepoInfoRequest>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
     let _v = ctl.add(v.into_inner()).await?;
     Ok(Response::new_success(Str::new("success".to_string())).response_ok())
 }

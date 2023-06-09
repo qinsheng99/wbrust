@@ -1,6 +1,15 @@
-use crate::domain::repo_info::RepoInfo;
+use crate::{
+    app::dto::CmdToRepoInfo,
+    domain::repo_info::RepoInfo,
+    utils::{error::Result, time::now, utils::uuid_new},
+};
+
 use sqlx::types::uuid::Uuid;
+
 use sqlx::FromRow;
+
+const FREE: &'static str = "free";
+const TIME_OUT: i32 = 30;
 
 #[derive(FromRow, Debug)]
 pub struct RepoInfoDO {
@@ -27,4 +36,17 @@ impl From<RepoInfoDO> for RepoInfo {
             modified_time: v.modified_time,
         }
     }
+}
+
+pub async fn to_repo_info_do(v: CmdToRepoInfo) -> Result<RepoInfoDO> {
+    Ok(RepoInfoDO {
+        uuid: uuid_new()?,
+        owner: v.owner,
+        repo: v.repo,
+        branch: v.branch,
+        status: FREE.parse()?,
+        last_commit: v.commit,
+        timeout: TIME_OUT,
+        modified_time: now(),
+    })
 }
