@@ -31,7 +31,7 @@ impl RepoInfoDTO {
             last_commit: v.last_commit,
             timeout: v.timeout,
             since: sub_now(v.modified_time),
-            modified_time: timestamp_to_date(v.modified_time, "")?,
+            modified_time: timestamp_to_date(v.modified_time.clone(), "")?,
         })
     }
 }

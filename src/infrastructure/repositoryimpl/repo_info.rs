@@ -35,7 +35,7 @@ impl RepoImpl for RepoInfoImpl {
         let repo = to_repo_info_do(v).await?;
 
         let _: Option<RepoInfoDO> = sqlx::query_as(&*format!(
-            "INSERT IGNORE INTO {} \
+            "INSERT INTO {} \
             (uuid,owner,repo,branch,status,last_commit,timeout,modified_time) \
             VALUES \
             ($1,$2,$3,$4,$5,$6,$7,$8)",

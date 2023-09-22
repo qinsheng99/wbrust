@@ -9,7 +9,7 @@ pub fn timestamp_to_date(i: i64, format: &str) -> Result<String> {
 
     match NaiveDateTime::from_timestamp_opt(i, 0) {
         None => Err(Error::DateError(String::from("parse time failed"))),
-        Some(s) => Ok(DateTime::<Utc>::from_utc(s, Utc).format(f).to_string()),
+        Some(s) => Ok(DateTime::<Utc>::from_naive_utc_and_offset(s, Utc).format(f).to_string()),
     }
 }
 
