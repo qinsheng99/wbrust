@@ -1,5 +1,5 @@
 use crate::app::dto::CmdToRepoInfo;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct RepoInfoRequest {
@@ -18,4 +18,10 @@ impl RepoInfoRequest {
             commit: self.commit.clone(),
         }
     }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ListQuery {
+    pub page: i64,
+    pub size: i64,
 }

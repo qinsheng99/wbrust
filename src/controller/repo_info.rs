@@ -7,7 +7,7 @@ use crate::{
         controller::{Response, ResponseT, Str},
         infrastructure::postgresql::get_db,
     },
-    controller::repo_info_request::RepoInfoRequest,
+    controller::repo_info_request::{ListQuery, RepoInfoRequest},
     infrastructure::repositoryimpl::repo_info::RepoInfoImpl,
     utils::error::Result,
 };
@@ -65,6 +65,10 @@ async fn add(v: web::Json<RepoInfoRequest>, ctl: web::Data<dyn RepoCtl>) -> Resu
     Ok(Response::new_success(Str::new("success".to_string())).response_ok())
 }
 
+async fn list(v: web::Query<ListQuery>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
+    Ok(Response::new_success(v.into_inner()).response_ok())
+}
+
 #[allow(dead_code)]
 pub fn scope() -> Vec<Resource> {
     let repo_ctl = web::Data::from(Arc::new(RepoController::new(Box::new(RepoService::new(
@@ -81,6 +85,9 @@ pub fn scope() -> Vec<Resource> {
         web::resource("/repo")
             .app_data(repo_ctl.clone())
             .route(web::post().to(add)),
+        web::resource("/list/repo")
+            .app_data(repo_ctl.clone())
+            .route(web::get().to(list)),
     ];
 
     r
