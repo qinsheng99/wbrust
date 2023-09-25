@@ -25,8 +25,9 @@ where
 
 #[async_trait]
 pub trait RepoCtl: Send + Sync {
-    async fn repo_datail(&self, id: String) -> Result<RepoInfoDTO>;
+    async fn repo_detail(&self, id: String) -> Result<RepoInfoDTO>;
     async fn add(&self, v: RepoInfoRequest) -> Result<()>;
+    async fn list(&self, v: ListQuery) -> Result<i64>;
 }
 
 impl<T> RepoController<T>
@@ -45,7 +46,7 @@ impl<T> RepoCtl for RepoController<T>
 where
     T: RepoServiceImpl,
 {
-    async fn repo_datail(&self, id: String) -> Result<RepoInfoDTO> {
+    async fn repo_detail(&self, id: String) -> Result<RepoInfoDTO> {
         Ok(self.service.repo_info(id).await?)
     }
 
@@ -53,10 +54,15 @@ where
         let cmd = v.to_cmd();
         Ok(self.service.add(cmd).await?)
     }
+
+    async fn list(&self, v: ListQuery) -> Result<i64> {
+        let cmd = v.to_cmd();
+        Ok(self.service.list(cmd).await?)
+    }
 }
 
 async fn repo_detail(id: web::Path<String>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
-    let v = ctl.repo_datail(id.into_inner()).await?;
+    let v = ctl.repo_detail(id.into_inner()).await?;
     Ok(Response::new_success(v).response_ok())
 }
 
@@ -66,7 +72,8 @@ async fn add(v: web::Json<RepoInfoRequest>, ctl: web::Data<dyn RepoCtl>) -> Resu
 }
 
 async fn list(v: web::Query<ListQuery>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
-    Ok(Response::new_success(v.into_inner()).response_ok())
+    let c = ctl.list(v.into_inner()).await?;
+    Ok(Response::new_success(c).response_ok())
 }
 
 #[allow(dead_code)]

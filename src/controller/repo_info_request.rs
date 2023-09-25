@@ -1,4 +1,4 @@
-use crate::app::dto::CmdToRepoInfo;
+use crate::app::dto::{CmdToListQuery, CmdToRepoInfo};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
@@ -10,12 +10,12 @@ pub struct RepoInfoRequest {
 }
 
 impl RepoInfoRequest {
-    pub fn to_cmd(&self) -> CmdToRepoInfo {
+    pub fn to_cmd(self) -> CmdToRepoInfo {
         CmdToRepoInfo {
-            owner: self.owner.clone(),
-            repo: self.repo.clone(),
-            branch: self.branch.clone(),
-            commit: self.commit.clone(),
+            owner: self.owner,
+            repo: self.repo,
+            branch: self.branch,
+            commit: self.commit,
         }
     }
 }
@@ -24,4 +24,13 @@ impl RepoInfoRequest {
 pub struct ListQuery {
     pub page: i64,
     pub size: i64,
+}
+
+impl ListQuery {
+    pub fn to_cmd(self) -> CmdToListQuery {
+        CmdToListQuery {
+            page: self.page,
+            size: self.size,
+        }
+    }
 }

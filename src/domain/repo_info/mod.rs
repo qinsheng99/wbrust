@@ -1,4 +1,4 @@
-use crate::app::dto::CmdToRepoInfo;
+use crate::app::dto::{CmdToListQuery, CmdToRepoInfo};
 use crate::utils::error::Result;
 use async_trait::async_trait;
 use sqlx::types::uuid::Uuid;
@@ -18,4 +18,5 @@ pub struct RepoInfo {
 pub trait RepoImpl: Send + Sync {
     async fn repo_detail_info(&self, id: String) -> Result<RepoInfo>;
     async fn add(&self, v: CmdToRepoInfo) -> Result<()>;
+    async fn total(&self, v: CmdToListQuery) -> Result<i64>;
 }

@@ -1,3 +1,4 @@
+use crate::app::dto::CmdToListQuery;
 use crate::{
     app::dto::{CmdToRepoInfo, RepoInfoDTO},
     domain::repo_info::RepoImpl,
@@ -17,6 +18,7 @@ where
 pub trait RepoServiceImpl: Send + Sync {
     async fn repo_info(&self, id: String) -> Result<RepoInfoDTO>;
     async fn add(&self, v: CmdToRepoInfo) -> Result<()>;
+    async fn list(&self, v: CmdToListQuery) -> Result<i64>;
 }
 
 impl<T> RepoService<T>
@@ -42,5 +44,9 @@ where
 
     async fn add(&self, v: CmdToRepoInfo) -> Result<()> {
         Ok(self.s.add(v).await?)
+    }
+
+    async fn list(&self, v: CmdToListQuery) -> Result<i64> {
+        Ok(self.s.total(v).await?)
     }
 }

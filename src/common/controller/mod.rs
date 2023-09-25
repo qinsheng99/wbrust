@@ -12,8 +12,8 @@ where
     T: Serialize,
 {
     pub code: u16,
-    pub data: T,
     pub msg: String,
+    pub data: T,
 }
 
 #[derive(Serialize)]
@@ -36,8 +36,8 @@ impl<T: Serialize> ResponseT<T> for Response<T> {
     fn new_success(data: T) -> Self {
         Response {
             code: StatusCode::OK.as_u16(),
-            data,
             msg: String::new(),
+            data,
         }
     }
 
@@ -45,8 +45,8 @@ impl<T: Serialize> ResponseT<T> for Response<T> {
     fn new(data: T, code: u16, msg: &str) -> Self {
         Response {
             code,
-            data,
             msg: msg.to_string(),
+            data,
         }
     }
 

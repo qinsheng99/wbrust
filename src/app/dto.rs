@@ -43,3 +43,9 @@ pub struct CmdToRepoInfo {
     pub branch: String,
     pub commit: String,
 }
+
+#[derive(Clone)]
+pub struct CmdToListQuery {
+    pub page: i64,
+    pub size: i64,
+}

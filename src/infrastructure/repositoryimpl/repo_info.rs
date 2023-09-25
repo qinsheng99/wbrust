@@ -1,8 +1,9 @@
-use crate::app::dto::CmdToRepoInfo;
 use crate::{
+    app::dto::{CmdToListQuery, CmdToRepoInfo},
     common::infrastructure::postgresql::PgDB,
     domain::repo_info::{RepoImpl, RepoInfo},
     infrastructure::repositoryimpl::repo_info_do::{to_repo_info_do, RepoInfoDO},
+    utils::error::Result,
 };
 use async_trait::async_trait;
 use sqlx::types::uuid;
@@ -21,7 +22,7 @@ impl RepoInfoImpl {
 
 #[async_trait]
 impl RepoImpl for RepoInfoImpl {
-    async fn repo_detail_info(&self, id: String) -> crate::utils::error::Result<RepoInfo> {
+    async fn repo_detail_info(&self, id: String) -> Result<RepoInfo> {
         let v: RepoInfoDO =
             sqlx::query_as(&*format!("SELECT * FROM {} WHERE uuid = $1", self.table))
                 .bind(uuid::Uuid::parse_str(&id)?)
@@ -31,7 +32,7 @@ impl RepoImpl for RepoInfoImpl {
         Ok(RepoInfo::from(v))
     }
 
-    async fn add(&self, v: CmdToRepoInfo) -> crate::utils::error::Result<()> {
+    async fn add(&self, v: CmdToRepoInfo) -> Result<()> {
         let repo = to_repo_info_do(v).await?;
 
         let _: Option<RepoInfoDO> = sqlx::query_as(&*format!(
@@ -55,5 +56,7 @@ impl RepoImpl for RepoInfoImpl {
         Ok(())
     }
 
-    // async fn
+    async fn total(&self, _v: CmdToListQuery) -> Result<i64> {
+        Ok(100)
+    }
 }
