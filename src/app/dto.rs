@@ -1,7 +1,7 @@
 use crate::{
     domain::repo_info::{ListRepoInfo, RepoInfo},
     utils::{
-        error::{Error, Result},
+        error::Result,
         time::{sub_now, timestamp_to_date},
     },
 };
@@ -47,11 +47,16 @@ impl RepoInfoListDTO {
         let mut repos: Vec<RepoInfoDTO> = vec![];
 
         for item in v.repo_list {
-            if let Ok(i) = RepoInfoDTO::from(item) {
-                repos.push(i);
-                continue;
-            } else {
-                return Err(Error::ParseError(String::from("parse repo info failed")));
+            // if let Ok(i) = RepoInfoDTO::from(item) {
+            //     repos.push(i);
+            //     continue;
+            // } else {
+            //     return Err(Error::ParseError(String::from("parse repo info failed")));
+            // }
+
+            match RepoInfoDTO::from(item) {
+                Ok(i) => repos.push(i),
+                Err(e) => return Err(e),
             }
         }
 
