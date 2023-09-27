@@ -50,3 +50,8 @@ pub async fn to_repo_info_do(v: CmdToRepoInfo) -> Result<RepoInfoDO> {
         modified_time: now(),
     })
 }
+
+#[derive(FromRow, Debug)]
+pub struct Total {
+    pub total: i64,
+}

@@ -1,7 +1,6 @@
 pub mod middleware;
 
 use actix_web::HttpResponse;
-use http::StatusCode;
 use serde::ser::SerializeStruct;
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::Result as SerdeResult;
@@ -35,7 +34,7 @@ impl<T: Serialize> ResponseT<T> for Response<T> {
     #[allow(dead_code)]
     fn new_success(data: T) -> Self {
         Response {
-            code: StatusCode::OK.as_u16(),
+            code: 0 as u16,
             msg: String::new(),
             data,
         }

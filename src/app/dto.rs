@@ -1,7 +1,7 @@
 use crate::{
-    domain::repo_info::RepoInfo,
+    domain::repo_info::{ListRepoInfo, RepoInfo},
     utils::{
-        error::Result,
+        error::{Error, Result},
         time::{sub_now, timestamp_to_date},
     },
 };
@@ -32,6 +32,32 @@ impl RepoInfoDTO {
             timeout: v.timeout,
             since: sub_now(v.modified_time),
             modified_time: timestamp_to_date(v.modified_time.clone(), "")?,
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RepoInfoListDTO {
+    pub repos: Vec<RepoInfoDTO>,
+    pub total: i64,
+}
+
+impl RepoInfoListDTO {
+    pub fn from(v: ListRepoInfo) -> Result<RepoInfoListDTO> {
+        let mut repos: Vec<RepoInfoDTO> = vec![];
+
+        for item in v.repo_list {
+            if let Ok(i) = RepoInfoDTO::from(item) {
+                repos.push(i);
+                continue;
+            } else {
+                return Err(Error::ParseError(String::from("parse repo info failed")));
+            }
+        }
+
+        Ok(RepoInfoListDTO {
+            repos,
+            total: v.total,
         })
     }
 }

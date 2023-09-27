@@ -1,6 +1,6 @@
 use crate::{
     app::{
-        dto::RepoInfoDTO,
+        dto::{RepoInfoDTO, RepoInfoListDTO},
         repo_info::{RepoService, RepoServiceImpl},
     },
     common::{
@@ -27,7 +27,7 @@ where
 pub trait RepoCtl: Send + Sync {
     async fn repo_detail(&self, id: String) -> Result<RepoInfoDTO>;
     async fn add(&self, v: RepoInfoRequest) -> Result<()>;
-    async fn list(&self, v: ListQuery) -> Result<i64>;
+    async fn list(&self, v: ListQuery) -> Result<RepoInfoListDTO>;
 }
 
 impl<T> RepoController<T>
@@ -55,7 +55,7 @@ where
         Ok(self.service.add(cmd).await?)
     }
 
-    async fn list(&self, v: ListQuery) -> Result<i64> {
+    async fn list(&self, v: ListQuery) -> Result<RepoInfoListDTO> {
         let cmd = v.to_cmd();
         Ok(self.service.list(cmd).await?)
     }

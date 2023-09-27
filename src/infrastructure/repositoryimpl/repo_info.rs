@@ -1,7 +1,8 @@
+use crate::infrastructure::repositoryimpl::repo_info_do::Total;
 use crate::{
     app::dto::{CmdToListQuery, CmdToRepoInfo},
     common::infrastructure::postgresql::PgDB,
-    domain::repo_info::{RepoImpl, RepoInfo},
+    domain::repo_info::{ListRepoInfo, RepoImpl, RepoInfo},
     infrastructure::repositoryimpl::repo_info_do::{to_repo_info_do, RepoInfoDO},
     utils::error::Result,
 };
@@ -57,6 +58,39 @@ impl RepoImpl for RepoInfoImpl {
     }
 
     async fn total(&self, _v: CmdToListQuery) -> Result<i64> {
-        Ok(100)
+        let v: Option<Total> =
+            sqlx::query_as(&*format!("SELECT COUNT(uuid) as total FROM {}", self.table))
+                .fetch_optional(&self.db)
+                .await?;
+
+        if let Some(total) = v {
+            return Ok(total.total);
+        }
+
+        Ok(0)
+    }
+
+    async fn list(&self, v: CmdToListQuery) -> Result<ListRepoInfo> {
+        let total = self.total(v.clone()).await?;
+        let mut l = ListRepoInfo::default();
+        if total == 0 {
+            return Ok(l);
+        }
+
+        let v: Vec<RepoInfoDO> =
+            sqlx::query_as(&*format!("SELECT * FROM {} LIMIT $1 OFFSET $2", self.table))
+                .bind(&v.size)
+                .bind((v.page - 1) * v.size)
+                .fetch_all(&self.db)
+                .await?;
+
+        let mut info_list: Vec<RepoInfo> = vec![];
+        for item in v {
+            info_list.push(RepoInfo::from(item))
+        }
+
+        l.repo_list = info_list;
+        l.total = total;
+        Ok(l)
     }
 }

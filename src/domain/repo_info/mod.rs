@@ -14,9 +14,16 @@ pub struct RepoInfo {
     pub modified_time: i64,
 }
 
+#[derive(Default)]
+pub struct ListRepoInfo {
+    pub repo_list: Vec<RepoInfo>,
+    pub total: i64,
+}
+
 #[async_trait]
 pub trait RepoImpl: Send + Sync {
     async fn repo_detail_info(&self, id: String) -> Result<RepoInfo>;
     async fn add(&self, v: CmdToRepoInfo) -> Result<()>;
     async fn total(&self, v: CmdToListQuery) -> Result<i64>;
+    async fn list(&self, v: CmdToListQuery) -> Result<ListRepoInfo>;
 }
