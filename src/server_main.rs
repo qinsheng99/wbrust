@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use crate::common::infrastructure::postgresql::init_db;
+use crate::common::infrastructure::{postgresql::init_db, redis::init_redis};
 use cfg::LocalConfig;
 use config::Config;
 use lazy_static::lazy_static;
@@ -61,6 +61,8 @@ async fn main() -> Result<()> {
     env_logger::init();
 
     init_db(SERVERCONFIG.clone()).await?;
+
+    init_redis(SERVERCONFIG.clone()).await?;
 
     info!("start wb server");
     let ser = Server::new(SERVERCONFIG.clone()).await?;

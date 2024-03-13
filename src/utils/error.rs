@@ -1,6 +1,7 @@
 use actix_web::{HttpResponse, ResponseError};
 use config::ConfigError;
 use http::StatusCode;
+use redis::RedisError;
 use serde::{Deserialize, Serialize};
 use sqlx::error::Error as SqlxError;
 use sqlx::types::uuid::Error as SqlxUuidError;
@@ -116,6 +117,9 @@ pub enum Error {
     #[error("parse error. {0}")]
     ParseError(String),
 
+    #[error("redis error. {0}")]
+    RedisError(String),
+
     // #[error("failed to param error. {0}")]
     // ParamError(String),
     #[error("")]
@@ -151,6 +155,12 @@ impl<T> From<PoisonError<T>> for Error {
 impl From<ConfigError> for Error {
     fn from(v: ConfigError) -> Self {
         Error::ConfigError(v.to_string())
+    }
+}
+
+impl From<RedisError> for Error {
+    fn from(v: RedisError) -> Self {
+        Error::RedisError(v.to_string())
     }
 }
 
