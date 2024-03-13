@@ -28,6 +28,7 @@ chrono = { version = "0.4", features = ["serde"] }
 async-trait = "0.1.60"
 uuid = { version = "0.8.2", features = ["v4", "serde"] }
 futures = "0.3.28"
+redis = "0.25.0"
 
 [[bin]]
 name = "server"

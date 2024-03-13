@@ -35,12 +35,20 @@ pub struct Args {
     port: u16,
 }
 
+const CONFIG_PATH: &'static str = "/src/config/config.toml";
+
 lazy_static! {
     pub static ref SERVERCONFIG: Arc<RwLock<Config>> = {
-        let mut p = "/Users/zhaojiaming/Documents/project/wbrust/src/config/config.toml";
-        if cfg!(target_os = "linux") {
-            p = "/root/project/wbrust/src/config/config.toml";
-        }
+        let p = format!(
+            "{}{}",
+            std::env::current_dir()
+                .unwrap()
+                .as_path()
+                .as_os_str()
+                .to_str()
+                .unwrap(),
+            CONFIG_PATH
+        );
         let args = Args::parse();
         let path = args.config_file.unwrap_or(String::from(p));
         let server_config = LocalConfig::new(&path);
