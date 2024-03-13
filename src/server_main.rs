@@ -46,7 +46,7 @@ lazy_static! {
                 .as_path()
                 .as_os_str()
                 .to_str()
-                .unwrap(),
+                .expect("failed"),
             CONFIG_PATH
         );
         let args = Args::parse();
