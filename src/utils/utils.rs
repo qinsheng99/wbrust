@@ -8,3 +8,8 @@ pub fn uuid_new() -> Result<Uuid> {
 
     Ok(Uuid::parse_str(u.as_str())?)
 }
+
+#[allow(dead_code)]
+pub fn parse_uuid(v: String) -> Result<Uuid> {
+    Ok(Uuid::parse_str(&v)?)
+}

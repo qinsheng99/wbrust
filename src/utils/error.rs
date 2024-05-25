@@ -125,6 +125,10 @@ pub enum Error {
     #[error("")]
     #[allow(dead_code)]
     None(String),
+
+    #[error("fn no implement")]
+    #[allow(dead_code)]
+    ImplementError,
 }
 
 impl Error {
