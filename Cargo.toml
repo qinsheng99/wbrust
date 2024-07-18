@@ -23,12 +23,13 @@ tokio = {version = "1.21.2", features = ["rt-multi-thread", "fs", "sync","full",
 lazy_static = "1.4.0"
 thiserror = "1.0.38"
 once_cell = "1.17.1"
-sqlx = {version ="0.6.3", features = ["postgres","migrate","runtime-tokio-rustls","chrono","uuid","time"]}
+sqlx = {version ="0.6.3", features = ["postgres","migrate","runtime-tokio-rustls","chrono","uuid","time","mysql","decimal","macros","json"]}
 chrono = { version = "0.4", features = ["serde"] }
 async-trait = "0.1.60"
 uuid = { version = "0.8.2", features = ["v4", "serde"] }
 futures = "0.3.28"
 redis = "0.25.0"
+mysql = "25.0.1"
 
 [[bin]]
 name = "server"

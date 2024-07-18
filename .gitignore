@@ -17,3 +17,8 @@ Cargo.lock
 src/config
 
 push.sh
+
+.DS_Store
+src/.DS_Store
+src/common/.DS_Store
+src/domain/.DS_Store
