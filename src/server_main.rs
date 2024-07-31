@@ -13,9 +13,7 @@ use cfg::LocalConfig;
 use server::Server;
 use utils::error::Result;
 
-use crate::common::infrastructure::{
-    mysql::init_mysql_db, postgresql::init_db, redis::get_redis_db, redis::init_redis,
-};
+use crate::common::infrastructure::{mysql::init_mysql_db, postgresql::init_db, redis::init_redis};
 
 mod app;
 mod cfg;
@@ -70,9 +68,6 @@ async fn main() -> Result<()> {
     init_mysql_db(SERVERCONFIG.clone()).await?;
 
     init_redis(SERVERCONFIG.clone()).await?;
-    let mut c = get_redis_db()?;
-    let v: String = c.get("name")?;
-    println!("{}", v);
 
     info!("start wb server");
     let ser = Server::new(SERVERCONFIG.clone()).await?;

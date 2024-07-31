@@ -1,3 +1,9 @@
+use std::sync::Arc;
+
+use actix_web::{Resource, Responder, web};
+use async_trait::async_trait;
+use redis::AsyncCommands;
+
 use crate::{
     app::{
         dto::{RepoInfoDTO, RepoInfoListDTO},
@@ -11,9 +17,7 @@ use crate::{
     infrastructure::repositoryimpl::repo_info::RepoInfoImpl,
     utils::error::Result,
 };
-use actix_web::{web, Resource, Responder};
-use async_trait::async_trait;
-use std::sync::Arc;
+use crate::common::infrastructure::redis::get_redis_db;
 
 #[derive(Debug)]
 pub struct RepoController<T>
@@ -72,8 +76,16 @@ async fn add(v: web::Json<RepoInfoRequest>, ctl: web::Data<dyn RepoCtl>) -> Resu
 }
 
 async fn list(v: web::Query<ListQuery>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
+    test_redis().await.expect("TODO: panic message");
     let c = ctl.list(v.into_inner()).await?;
     Ok(Response::new_success(c).response_ok())
+}
+
+async fn test_redis() -> Result<()> {
+    let mut c = get_redis_db()?;
+    let value: String = c.get("name").await?;
+    println!("{}", value);
+    Ok(())
 }
 
 #[allow(dead_code)]

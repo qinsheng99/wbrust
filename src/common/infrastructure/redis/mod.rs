@@ -2,13 +2,16 @@ use std::sync::{Arc, RwLock};
 
 use config::Config;
 use once_cell::sync::OnceCell;
-use redis::{Client, Connection, ConnectionAddr, ConnectionInfo, IntoConnectionInfo, RedisResult};
+use redis::{
+    aio::MultiplexedConnection, AsyncCommands, Client, ConnectionAddr, ConnectionInfo,
+    IntoConnectionInfo, RedisResult,
+};
 
 use crate::utils::error::{Error, Result};
 
-pub type RedisDB = Arc<Connection>;
+pub type RedisDB = MultiplexedConnection;
 
-static REDIS_DB_CLI: OnceCell<RedisDB> = OnceCell::new();
+static REDIS_DB_CLI: OnceCell<MultiplexedConnection> = OnceCell::new();
 
 struct RedisParam {
     host: String,
@@ -42,11 +45,11 @@ pub async fn init_redis(cfg: Arc<RwLock<Config>>) -> Result<()> {
         port,
         password,
     };
+
     let client = Client::open(param).unwrap();
+    let stearm = client.get_multiplexed_async_connection().await?;
 
-    let conn = client.get_connection()?;
-
-    if let Some(_err) = REDIS_DB_CLI.set(Arc::new(conn)).err() {
+    if let Some(_err) = REDIS_DB_CLI.set(stearm).err() {
         Error::RedisError(String::from("set redis failed"));
     }
 
@@ -54,9 +57,9 @@ pub async fn init_redis(cfg: Arc<RwLock<Config>>) -> Result<()> {
 }
 
 #[allow(dead_code)]
-pub fn get_redis_db() -> Result<RedisDB> {
+pub fn get_redis_db() -> Result<MultiplexedConnection> {
     match REDIS_DB_CLI.get() {
         None => Err(Error::RedisError(String::from("redis cli is none"))),
-        Some(db) => Ok(Arc::clone(db)),
+        Some(db) => Ok(db.clone()),
     }
 }
