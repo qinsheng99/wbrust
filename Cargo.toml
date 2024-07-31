@@ -34,3 +34,7 @@ mysql = "25.0.1"
 [[bin]]
 name = "server"
 path = "src/server_main.rs"
+
+[[bin]]
+name = "demo"
+path = "src/demo.rs"

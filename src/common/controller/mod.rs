@@ -34,7 +34,7 @@ impl<T: Serialize> ResponseT<T> for Response<T> {
     #[allow(dead_code)]
     fn new_success(data: T) -> Self {
         Response {
-            code: 0 as u16,
+            code: 0u16,
             msg: String::new(),
             data,
         }
