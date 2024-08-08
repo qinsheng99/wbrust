@@ -1,6 +1,8 @@
+#[allow(dead_code)]
 struct Owner(String);
 
 pub trait OwnerT {
+    #[allow(dead_code)]
     fn owner(&self) -> String;
 }
 

@@ -6,7 +6,6 @@ use clap::Parser;
 use config::Config;
 use lazy_static::lazy_static;
 use log::info;
-use redis::Commands;
 use tokio;
 
 use cfg::LocalConfig;

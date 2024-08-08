@@ -3,13 +3,13 @@ use std::sync::{Arc, RwLock};
 use config::Config;
 use once_cell::sync::OnceCell;
 use redis::{
-    aio::MultiplexedConnection, AsyncCommands, Client, ConnectionAddr, ConnectionInfo,
-    IntoConnectionInfo, RedisResult,
+    aio::MultiplexedConnection, Client, ConnectionAddr, ConnectionInfo, IntoConnectionInfo,
+    RedisResult,
 };
 
 use crate::utils::error::{Error, Result};
 
-pub type RedisDB = MultiplexedConnection;
+// pub type RedisDB = MultiplexedConnection;
 
 static REDIS_DB_CLI: OnceCell<MultiplexedConnection> = OnceCell::new();
 

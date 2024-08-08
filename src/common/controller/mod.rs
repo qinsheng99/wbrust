@@ -1,9 +1,9 @@
-pub mod middleware;
-
 use actix_web::HttpResponse;
-use serde::ser::SerializeStruct;
 use serde::{Deserialize, Serialize, Serializer};
+use serde::ser::SerializeStruct;
 use serde_json::Result as SerdeResult;
+
+pub mod middleware;
 
 #[derive(Deserialize)]
 pub struct Response<T>
@@ -26,6 +26,7 @@ impl Str {
 
 pub trait ResponseT<T> {
     fn new_success(data: T) -> Self;
+    #[allow(dead_code)]
     fn new(data: T, code: u16, msg: &str) -> Self;
     fn response_ok(&self) -> HttpResponse;
 }

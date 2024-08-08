@@ -1,8 +1,10 @@
-use crate::utils::file::{read_file, read_file_to_yaml};
+use std::sync::{Arc, RwLock};
+
 use config::{Config as Cfg, File, FileFormat};
 use serde::{Deserialize, Serialize};
 use serde_with_expand_env::with_expand_envs;
-use std::sync::{Arc, RwLock};
+
+use crate::utils::file::{read_file, read_file_to_yaml};
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub struct Config {
@@ -10,6 +12,7 @@ pub struct Config {
     access_token: String,
 }
 
+#[allow(dead_code)]
 pub trait ConfigImpl {
     fn access_token(&self) -> &String;
 }
