@@ -3,6 +3,7 @@ use std::time::Duration;
 
 use chrono::Duration as chDuration;
 use once_cell::sync::OnceCell;
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use sqlx::mysql::{MySql, MySqlPoolOptions};
 use sqlx::Pool;
 
@@ -11,6 +12,8 @@ use crate::utils::error::{Error, Result};
 pub type MysqlDB = Pool<MySql>;
 
 static DB_CLI: OnceCell<MysqlDB> = OnceCell::new();
+
+static DB_CONNECTION: OnceCell<DatabaseConnection> = OnceCell::new();
 
 pub async fn init_mysql_db(v: Arc<RwLock<config::Config>>) -> Result<()> {
     let connect_url = v
@@ -45,6 +48,24 @@ pub async fn init_mysql_db(v: Arc<RwLock<config::Config>>) -> Result<()> {
 
     DB_CLI.set(db).expect("db pool configured");
 
+    let mut opt = ConnectOptions::new(connect_url);
+    opt.max_connections(max_connections)
+        .min_connections(5)
+        .connect_timeout(Duration::from_secs(8))
+        .acquire_timeout(Duration::from_secs(8))
+        .idle_timeout(Duration::from_secs(8))
+        .max_lifetime(Duration::from_secs(8));
+    // .sqlx_logging(true)
+    // .sqlx_logging_level(log::LevelFilter::Info);
+
+    DB_CONNECTION
+        .set(Database::connect(opt).await?)
+        .expect("database connection configured");
+    get_db_connection()?
+        .ping()
+        .await
+        .expect("database connection failed");
+
     Ok(())
 }
 
@@ -54,4 +75,13 @@ pub fn get_db() -> Result<MysqlDB> {
         Some(db) => Ok(db.clone()),
         None => Err(Error::DataBaseError(String::from("no db pool"))),
     }
+}
+
+pub fn get_db_connection() -> Result<&'static DatabaseConnection> {
+    return match DB_CONNECTION.get() {
+        None => Err(Error::NewDataBaseError(
+            "failed to get database pool".to_string(),
+        )),
+        Some(pool) => Ok(pool),
+    };
 }

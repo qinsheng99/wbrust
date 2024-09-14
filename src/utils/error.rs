@@ -1,10 +1,3 @@
-use actix_web::{HttpResponse, ResponseError};
-use config::ConfigError;
-use http::StatusCode;
-use redis::RedisError;
-use serde::{Deserialize, Serialize};
-use sqlx::error::Error as SqlxError;
-use sqlx::types::uuid::Error as SqlxUuidError;
 use std::convert::Infallible;
 use std::error::Error as libError;
 use std::fmt::{Debug, Display, Formatter};
@@ -12,6 +5,15 @@ use std::io::Error as IoError;
 use std::num::{ParseFloatError, ParseIntError};
 use std::process;
 use std::sync::PoisonError;
+
+use actix_web::{HttpResponse, ResponseError};
+use config::ConfigError;
+use http::StatusCode;
+use redis::RedisError;
+use sea_orm::DbErr;
+use serde::{Deserialize, Serialize};
+use sqlx::error::Error as SqlxError;
+use sqlx::types::uuid::Error as SqlxUuidError;
 use thiserror::Error as ThisError;
 use uuid::Error as UuidError;
 
@@ -93,6 +95,9 @@ pub enum Error {
     #[error("failed to database error. {0}")]
     DataBaseError(String),
 
+    #[error("failed to new sea-orm database error. {0}")]
+    NewDataBaseError(String),
+
     #[error("record not found error")]
     NotFound,
 
@@ -153,6 +158,12 @@ impl From<Infallible> for Error {
 impl<T> From<PoisonError<T>> for Error {
     fn from(v: PoisonError<T>) -> Self {
         Error::PoisonError(v.to_string())
+    }
+}
+
+impl From<DbErr> for Error {
+    fn from(value: DbErr) -> Self {
+        Error::NewDataBaseError(value.to_string())
     }
 }
 

@@ -1,15 +1,24 @@
-use crate::app::dto::{CmdToListQuery, RepoInfoListDTO};
+use async_trait::async_trait;
+
 use crate::{
     app::dto::{CmdToRepoInfo, RepoInfoDTO},
-    domain::repo_info::RepoImpl,
+    domain::repo_info::{NewRepoInfoImpl, RepoImpl},
     utils::error::Result,
 };
-use async_trait::async_trait;
+use crate::app::dto::{CmdToListQuery, RepoInfoListDTO};
 
 #[derive(Debug)]
 pub struct RepoService<T>
 where
     T: RepoImpl,
+{
+    s: Box<T>,
+}
+
+#[derive(Debug)]
+pub struct NewRepoService<T>
+where
+    T: NewRepoInfoImpl,
 {
     s: Box<T>,
 }
@@ -21,6 +30,11 @@ pub trait RepoServiceImpl: Send + Sync {
     async fn list(&self, v: CmdToListQuery) -> Result<RepoInfoListDTO>;
 }
 
+#[async_trait]
+pub trait NewRepoServiceImpl: Send + Sync {
+    async fn repo_info(&self, id: u64) -> Result<()>;
+}
+
 impl<T> RepoService<T>
 where
     T: RepoImpl,
@@ -28,6 +42,16 @@ where
     #[allow(dead_code)]
     pub fn new(s: Box<T>) -> Self {
         RepoService { s }
+    }
+}
+
+impl<T> NewRepoService<T>
+where
+    T: NewRepoInfoImpl + Clone + 'static,
+{
+    #[allow(dead_code)]
+    pub fn new(s: Box<T>) -> Self {
+        NewRepoService { s }
     }
 }
 
@@ -50,5 +74,17 @@ where
         let v = self.s.list(v).await?;
 
         RepoInfoListDTO::from(v)
+    }
+}
+
+#[async_trait]
+impl<T> NewRepoServiceImpl for NewRepoService<T>
+where
+    T: NewRepoInfoImpl + Sync,
+{
+    async fn repo_info(&self, id: u64) -> Result<()> {
+        let _ = self.s.repo_detail_info_for_sea(id).await?;
+
+        Ok(())
     }
 }

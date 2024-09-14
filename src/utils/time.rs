@@ -1,5 +1,6 @@
-use crate::utils::error::{Error, Result};
 use chrono::prelude::*;
+
+use crate::utils::error::{Error, Result};
 
 pub fn timestamp_to_date(i: i64, format: &str) -> Result<String> {
     let mut f = format;
@@ -7,9 +8,9 @@ pub fn timestamp_to_date(i: i64, format: &str) -> Result<String> {
         f = "%Y-%m-%d %H:%M:%S"
     }
 
-    match NaiveDateTime::from_timestamp_opt(i, 0) {
+    match DateTime::from_timestamp(i, 0) {
         None => Err(Error::DateError(String::from("parse time failed"))),
-        Some(s) => Ok(DateTime::<Utc>::from_utc(s, Utc).format(f).to_string()),
+        Some(s) => Ok(s.format(f).to_string()),
     }
 }
 

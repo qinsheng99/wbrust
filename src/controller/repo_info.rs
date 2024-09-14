@@ -7,22 +7,33 @@ use redis::AsyncCommands;
 use crate::{
     app::{
         dto::{RepoInfoDTO, RepoInfoListDTO},
-        repo_info::{RepoService, RepoServiceImpl},
+        repo_info::{NewRepoServiceImpl, RepoService, RepoServiceImpl},
     },
     common::{
         controller::{Response, ResponseT, Str},
+        infrastructure::mysql::get_db_connection,
         infrastructure::postgresql::get_db,
     },
     controller::repo_info_request::{ListQuery, RepoInfoRequest},
+    infrastructure::repositoryimpl::repo_info::NewRepoInfo,
     infrastructure::repositoryimpl::repo_info::RepoInfoImpl,
     utils::error::Result,
 };
+use crate::app::repo_info::NewRepoService;
 use crate::common::infrastructure::redis::get_redis_db;
 
 #[derive(Debug)]
 pub struct RepoController<T>
 where
     T: RepoServiceImpl + Send,
+{
+    service: Arc<Box<T>>,
+}
+
+#[derive(Debug)]
+pub struct NewRepoController<T>
+where
+    T: NewRepoServiceImpl + Send,
 {
     service: Arc<Box<T>>,
 }
@@ -34,9 +45,25 @@ pub trait RepoCtl: Send + Sync {
     async fn list(&self, v: ListQuery) -> Result<RepoInfoListDTO>;
 }
 
+#[async_trait]
+pub trait NewRepoCtl: Send + Sync {
+    async fn repo_detail(&self, id: u64) -> Result<()>;
+}
+
 impl<T> RepoController<T>
 where
     T: RepoServiceImpl,
+{
+    pub fn new(service: Box<T>) -> Self {
+        Self {
+            service: Arc::new(service),
+        }
+    }
+}
+
+impl<T> NewRepoController<T>
+where
+    T: NewRepoServiceImpl,
 {
     pub fn new(service: Box<T>) -> Self {
         Self {
@@ -65,6 +92,17 @@ where
     }
 }
 
+#[async_trait]
+impl<T> NewRepoCtl for NewRepoController<T>
+where
+    T: NewRepoServiceImpl,
+{
+    async fn repo_detail(&self, id: u64) -> Result<()> {
+        self.service.repo_info(id).await?;
+        Ok(())
+    }
+}
+
 async fn repo_detail(id: web::Path<String>, ctl: web::Data<dyn RepoCtl>) -> Result<impl Responder> {
     let v = ctl.repo_detail(id.into_inner()).await?;
     Ok(Response::new_success(v).response_ok())
@@ -79,6 +117,14 @@ async fn list(v: web::Query<ListQuery>, ctl: web::Data<dyn RepoCtl>) -> Result<i
     test_redis().await.expect("TODO: panic message");
     let c = ctl.list(v.into_inner()).await?;
     Ok(Response::new_success(c).response_ok())
+}
+
+async fn new_repo_detail(
+    id: web::Path<u64>,
+    ctl: web::Data<dyn NewRepoCtl>,
+) -> Result<impl Responder> {
+    let _v = ctl.repo_detail(id.into_inner()).await?;
+    Ok(Response::new_success("s".to_string()).response_ok())
 }
 
 async fn test_redis() -> Result<()> {
@@ -97,10 +143,17 @@ pub fn scope() -> Vec<Resource> {
         )),
     )))) as Arc<dyn RepoCtl>);
 
+    let new_repo_ctl = web::Data::from(Arc::new(NewRepoController::new(Box::new(
+        NewRepoService::new(Box::new(NewRepoInfo::new(get_db_connection().unwrap()))),
+    ))) as Arc<dyn NewRepoCtl>);
+
     let r: Vec<Resource> = vec![
         web::resource("/repo/{id}")
             .app_data(repo_ctl.clone())
             .route(web::get().to(repo_detail)),
+        web::resource("/new_repo/{id}")
+            .app_data(new_repo_ctl.clone())
+            .route(web::get().to(new_repo_detail)),
         web::resource("/repo")
             .app_data(repo_ctl.clone())
             .route(web::post().to(add)),

@@ -1,13 +1,18 @@
-use crate::infrastructure::repositoryimpl::repo_info_do::Total;
+use async_trait::async_trait;
+use sea_orm::{DatabaseConnection, EntityTrait};
+use sqlx::types::uuid;
+
 use crate::{
     app::dto::{CmdToListQuery, CmdToRepoInfo},
     common::infrastructure::postgresql::PgDB,
     domain::repo_info::{ListRepoInfo, RepoImpl, RepoInfo},
-    infrastructure::repositoryimpl::repo_info_do::{to_repo_info_do, RepoInfoDO},
+    infrastructure::repositoryimpl::repo_info_do::{RepoInfoDO, to_repo_info_do},
     utils::error::Result,
 };
-use async_trait::async_trait;
-use sqlx::types::uuid;
+use crate::domain::repo_info::NewRepoInfoImpl;
+use crate::infrastructure::repositoryimpl::dto;
+use crate::infrastructure::repositoryimpl::repo_info_do::Total;
+use crate::utils::error::Error;
 
 #[derive(Debug)]
 pub struct RepoInfoImpl {
@@ -18,6 +23,18 @@ pub struct RepoInfoImpl {
 impl RepoInfoImpl {
     pub fn new(db: PgDB, table: String) -> Self {
         Self { db, table }
+    }
+}
+
+#[derive(Clone)]
+#[allow(dead_code)]
+pub struct NewRepoInfo<'a> {
+    new_db: &'a DatabaseConnection,
+}
+#[allow(dead_code)]
+impl<'a> NewRepoInfo<'a> {
+    pub fn new(new_db: &'a DatabaseConnection) -> Self {
+        Self { new_db }
     }
 }
 
@@ -92,5 +109,19 @@ impl RepoImpl for RepoInfoImpl {
         l.repo_list = info_list;
         l.total = total;
         Ok(l)
+    }
+}
+#[async_trait]
+#[allow(dead_code)]
+impl<'a> NewRepoInfoImpl for NewRepoInfo<'a> {
+    async fn repo_detail_info_for_sea(&self, id: u64) -> Result<()> {
+        match dto::Entity::find_by_id(id).one(self.new_db).await? {
+            None => Err(Error::NotFound),
+            Some(user) => {
+                println!("{:?}", user);
+                
+                Ok(())
+            }
+        }
     }
 }

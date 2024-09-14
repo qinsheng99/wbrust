@@ -1,7 +1,8 @@
-use crate::app::dto::{CmdToListQuery, CmdToRepoInfo};
-use crate::utils::error::Result;
 use async_trait::async_trait;
 use sqlx::types::uuid::Uuid;
+
+use crate::app::dto::{CmdToListQuery, CmdToRepoInfo};
+use crate::utils::error::Result;
 
 pub struct RepoInfo {
     pub uuid: Uuid,
@@ -26,4 +27,10 @@ pub trait RepoImpl: Send + Sync {
     async fn add(&self, v: CmdToRepoInfo) -> Result<()>;
     async fn total(&self, v: CmdToListQuery) -> Result<i64>;
     async fn list(&self, v: CmdToListQuery) -> Result<ListRepoInfo>;
+}
+
+#[async_trait]
+#[allow(dead_code)]
+pub trait NewRepoInfoImpl: Send + Sync {
+    async fn repo_detail_info_for_sea(&self, id: u64) -> Result<()>;
 }
