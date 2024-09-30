@@ -119,9 +119,13 @@ impl<'a> NewRepoInfoImpl for NewRepoInfo<'a> {
             None => Err(Error::NotFound),
             Some(user) => {
                 println!("{:?}", user);
-                
+
                 Ok(())
             }
         }
+    }
+
+    async fn rq(&self) -> Result<()> {
+        Ok(())
     }
 }

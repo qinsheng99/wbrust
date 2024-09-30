@@ -33,4 +33,5 @@ pub trait RepoImpl: Send + Sync {
 #[allow(dead_code)]
 pub trait NewRepoInfoImpl: Send + Sync {
     async fn repo_detail_info_for_sea(&self, id: u64) -> Result<()>;
+    async fn rq(&self) -> Result<()>;
 }
