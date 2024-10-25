@@ -17,9 +17,9 @@ pub fn make_answer(_item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn show_streams(attr: TokenStream, item: TokenStream) -> TokenStream {
-    println!("attr: \"{}\"", attr.to_string());
-    println!("item: \"{}\"", item.to_string());
+pub fn show_streams(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    // println!("attr: \"{}\"", attr.to_string());
+    // println!("item: \"{}\"", item.to_string());
     item
 }
 #[proc_macro_derive(hm)]
@@ -51,7 +51,7 @@ pub fn seactf(item: TokenStream) -> TokenStream {
     }
 
     #[allow(dead_code)]
-    let mut struct_q = quote! {};
+    let struct_q = quote! {};
 
     d.attrs
         .iter()
@@ -61,8 +61,8 @@ pub fn seactf(item: TokenStream) -> TokenStream {
                 if meta.path.is_ident("comment") {
                     let name: Lit = meta.value()?.parse()?;
                     // println!("{:?}", Some(name));
-                    if let Lit::Str(s) = name {
-                        println!("{:?}", s);
+                    if let Lit::Str(_s) = name {
+                        // println!("{:?}", s);
                     }
                     // struct_q = quote! {
                     //     fn struct_f()->Option(&str) {
