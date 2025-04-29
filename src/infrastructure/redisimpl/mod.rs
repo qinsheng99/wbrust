@@ -33,7 +33,7 @@ impl<'a> RedisCliImpl for RedisCLi<'a> {
     }
 
     async fn set(&mut self, key: String, value: String, option: SetOptions) -> Result<()> {
-        let _ = self.new_db.set_options(key, value, option).await?;
+        let _: () = self.new_db.set_options(key, value, option).await?;
         Ok(())
     }
 }
