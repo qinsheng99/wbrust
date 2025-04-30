@@ -17,8 +17,8 @@ use crate::{
         infrastructure::postgresql::get_db,
     },
     controller::repo::repo_info_request::{ListQuery, RepoInfoRequest},
-    infrastructure::repositoryimpl::repo_info::NewRepoInfo,
-    infrastructure::repositoryimpl::repo_info::RepoInfoImpl,
+    infrastructure::repositoryimpl::repo::repo_info::NewRepoInfo,
+    infrastructure::repositoryimpl::repo::repo_info::RepoInfoImpl,
     utils::error::Result,
 };
 
