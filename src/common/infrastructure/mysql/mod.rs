@@ -78,10 +78,10 @@ pub fn get_db() -> Result<MysqlDB> {
 }
 
 pub fn get_db_connection() -> Result<&'static DatabaseConnection> {
-    return match DB_CONNECTION.get() {
+    match DB_CONNECTION.get() {
         None => Err(Error::NewDataBaseError(
             "failed to get database pool".to_string(),
         )),
         Some(pool) => Ok(pool),
-    };
+    }
 }
