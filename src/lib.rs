@@ -1,11 +1,11 @@
-// extern crate proc_macro;
+extern crate proc_macro;
 extern crate syn;
 
 use quote::quote;
-use syn::{DeriveInput, Lit, parse_macro_input};
-use syn::__private::TokenStream;
+use syn::{parse_macro_input, DeriveInput, Lit};
+// use syn::__private::TokenStream;
 
-// use proc_macro::TokenStream;
+use proc_macro::TokenStream;
 
 #[proc_macro_derive(MyDerive)]
 pub fn proc_macro_handle(_item: TokenStream) -> TokenStream {
