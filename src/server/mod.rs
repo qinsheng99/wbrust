@@ -28,7 +28,7 @@ impl Server {
             App::new()
                 .wrap(middleware::Logger::default())
                 .wrap(Auth)
-                .service(ctl::get_scope(path))
+                .service(ctl::repo::get_repo_scope(path))
         });
 
         http_server.bind(address)?.run().await?;

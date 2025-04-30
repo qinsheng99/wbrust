@@ -1,9 +1,11 @@
 use std::sync::Arc;
 
-use actix_web::{Resource, Responder, web};
+use actix_web::{web, Resource, Responder};
 use async_trait::async_trait;
 use redis::AsyncCommands;
 
+use crate::app::repo_info::NewRepoService;
+use crate::common::infrastructure::redis::get_redis_db;
 use crate::{
     app::{
         dto::{RepoInfoDTO, RepoInfoListDTO},
@@ -14,13 +16,11 @@ use crate::{
         infrastructure::mysql::get_db_connection,
         infrastructure::postgresql::get_db,
     },
-    controller::repo_info_request::{ListQuery, RepoInfoRequest},
+    controller::repo::repo_info_request::{ListQuery, RepoInfoRequest},
     infrastructure::repositoryimpl::repo_info::NewRepoInfo,
     infrastructure::repositoryimpl::repo_info::RepoInfoImpl,
     utils::error::Result,
 };
-use crate::app::repo_info::NewRepoService;
-use crate::common::infrastructure::redis::get_redis_db;
 
 #[derive(Debug)]
 pub struct RepoController<T>
