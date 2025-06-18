@@ -134,6 +134,10 @@ pub enum Error {
     #[error("fn no implement")]
     #[allow(dead_code)]
     ImplementError,
+
+    #[error("error. {0}")]
+    #[allow(dead_code)]
+    General(String),
 }
 
 impl Error {
@@ -143,39 +147,9 @@ impl Error {
     }
 }
 
-impl From<IoError> for Error {
-    fn from(v: IoError) -> Self {
-        Error::IOError(v.to_string())
-    }
-}
-
-impl From<Infallible> for Error {
-    fn from(v: Infallible) -> Self {
-        Error::ParseError(v.to_string())
-    }
-}
-
 impl<T> From<PoisonError<T>> for Error {
     fn from(v: PoisonError<T>) -> Self {
         Error::PoisonError(v.to_string())
-    }
-}
-
-impl From<DbErr> for Error {
-    fn from(value: DbErr) -> Self {
-        Error::NewDataBaseError(value.to_string())
-    }
-}
-
-impl From<ConfigError> for Error {
-    fn from(v: ConfigError) -> Self {
-        Error::ConfigError(v.to_string())
-    }
-}
-
-impl From<RedisError> for Error {
-    fn from(v: RedisError) -> Self {
-        Error::RedisError(v.to_string())
     }
 }
 
@@ -191,29 +165,41 @@ impl From<SqlxError> for Error {
     }
 }
 
-impl From<ParseIntError> for Error {
-    fn from(v: ParseIntError) -> Self {
-        Error::ConventError(v.to_string())
-    }
+#[allow(unused_macros)]
+macro_rules! errfrom {
+    ($($st:ty),* => $variant:ident) => (
+        $(
+            impl From<$st> for Error {
+                fn from(e: $st) -> Error {
+                    Error::$variant(e.to_string())
+                }
+            }
+        )*
+    )
 }
 
-impl From<ParseFloatError> for Error {
-    fn from(v: ParseFloatError) -> Self {
-        Error::ConventError(v.to_string())
-    }
+//General
+
+#[allow(unused_macros)]
+macro_rules! generalerrorfrom {
+    ($($st:ty),*) => (
+        $(
+            impl From<$st> for Error {
+                fn from(e: $st) -> Error {
+                    Error::General(format!({:?}, e))
+                }
+            }
+        )*
+    )
 }
 
-impl From<UuidError> for Error {
-    fn from(v: UuidError) -> Self {
-        Error::UUIDError(v.to_string())
-    }
-}
-
-impl From<SqlxUuidError> for Error {
-    fn from(v: SqlxUuidError) -> Self {
-        Error::UUIDError(v.to_string())
-    }
-}
+errfrom!(RedisError => RedisError);
+errfrom!(DbErr => NewDataBaseError);
+errfrom!(ConfigError => ConfigError);
+errfrom!(Infallible => ParseError);
+errfrom!(IoError => IOError);
+errfrom!(ParseIntError, ParseFloatError => ConventError);
+errfrom!(UuidError, SqlxUuidError => UUIDError);
 
 impl From<&str> for Error {
     fn from(v: &str) -> Self {
