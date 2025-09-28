@@ -222,9 +222,8 @@ pub struct ResponseErr {
 impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::NotFound => StatusCode::NOT_FOUND,
-
-            _ => StatusCode::BAD_REQUEST,
+            // Error::NotFound => StatusCode::NOT_FOUND,
+            _ => StatusCode::OK,
         }
     }
 

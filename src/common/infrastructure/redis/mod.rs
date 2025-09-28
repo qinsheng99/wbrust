@@ -34,11 +34,11 @@ impl IntoConnectionInfo for RedisParam {
 }
 
 pub async fn init_redis(cfg: Arc<RwLock<Config>>) -> Result<()> {
-    let host = cfg.read()?.get_string("redis.host").unwrap();
+    let host = cfg.read()?.get_string("redis.host")?;
 
-    let port = cfg.read()?.get_int("redis.port").unwrap() as u16;
+    let port = cfg.read()?.get_int("redis.port")? as u16;
 
-    let password = cfg.read()?.get_string("redis.password").unwrap();
+    let password = cfg.read()?.get_string("redis.password")?;
 
     let param = RedisParam {
         host,
@@ -46,7 +46,7 @@ pub async fn init_redis(cfg: Arc<RwLock<Config>>) -> Result<()> {
         password,
     };
 
-    let client = Client::open(param).unwrap();
+    let client = Client::open(param)?;
     let stearm = client.get_multiplexed_async_connection().await?;
 
     if let Some(_err) = REDIS_DB_CLI.set(stearm).err() {
