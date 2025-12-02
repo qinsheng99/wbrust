@@ -1,10 +1,11 @@
-use async_trait::async_trait;
-use redis::{aio::MultiplexedConnection, SetOptions};
-use redis::AsyncCommands;
-
-use crate::common::infrastructure::redis::get_redis_db;
-use crate::domain::redis::RedisCliImpl;
-use crate::utils::error::Result;
+use {
+    crate::{
+        common::infrastructure::redis::get_redis_db, domain::redis::RedisCliImpl,
+        utils::error::Result,
+    },
+    async_trait::async_trait,
+    redis::{aio::MultiplexedConnection, AsyncCommands, SetOptions},
+};
 
 #[allow(dead_code)]
 async fn get(key: String) -> Result<String> {

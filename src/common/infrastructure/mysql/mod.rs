@@ -1,13 +1,13 @@
-use std::sync::{Arc, RwLock};
-use std::time::Duration;
-
-use chrono::Duration as chDuration;
-use once_cell::sync::OnceCell;
-use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use sqlx::mysql::{MySql, MySqlPoolOptions};
-use sqlx::Pool;
-
-use crate::utils::error::{Error, Result};
+use {
+    crate::utils::error::{Error, Result},
+    chrono::Duration as chDuration,
+    once_cell::sync::OnceCell,
+    sea_orm::{ConnectOptions, Database, DatabaseConnection},
+    sqlx::mysql::{MySql, MySqlPoolOptions},
+    sqlx::Pool,
+    std::sync::{Arc, RwLock},
+    std::time::Duration,
+};
 
 pub type MysqlDB = Pool<MySql>;
 

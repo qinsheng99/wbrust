@@ -1,10 +1,12 @@
-use crate::utils::error::{Error, Result};
-use chrono::Duration as chDuration;
-use once_cell::sync::OnceCell;
-use sqlx::postgres::{PgPoolOptions, Postgres};
-use sqlx::Pool;
-use std::sync::{Arc, RwLock};
-use std::time::Duration;
+use {
+    crate::utils::error::{Error, Result},
+    chrono::Duration as chDuration,
+    once_cell::sync::OnceCell,
+    sqlx::postgres::{PgPoolOptions, Postgres},
+    sqlx::Pool,
+    std::sync::{Arc, RwLock},
+    std::time::Duration,
+};
 
 pub type PgDB = Pool<Postgres>;
 

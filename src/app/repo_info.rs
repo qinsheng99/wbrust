@@ -1,11 +1,10 @@
 use async_trait::async_trait;
 
 use crate::{
-    app::dto::{CmdToRepoInfo, RepoInfoDTO},
+    app::dto::{CmdToListQuery, CmdToRepoInfo, RepoInfoDTO, RepoInfoListDTO},
     domain::repo_info::{NewRepoInfoImpl, RepoImpl},
     utils::error::Result,
 };
-use crate::app::dto::{CmdToListQuery, RepoInfoListDTO};
 
 #[derive(Debug)]
 pub struct RepoService<T>

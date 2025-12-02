@@ -1,25 +1,21 @@
-use std::sync::Arc;
-
-use actix_web::{web, Resource, Responder};
-use async_trait::async_trait;
-use redis::AsyncCommands;
-
-use crate::app::repo_info::NewRepoService;
-use crate::common::infrastructure::redis::get_redis_db;
-use crate::{
-    app::{
-        dto::{RepoInfoDTO, RepoInfoListDTO},
-        repo_info::{NewRepoServiceImpl, RepoService, RepoServiceImpl},
+use {
+    crate::{
+        app::{
+            dto::{RepoInfoDTO, RepoInfoListDTO},
+            repo_info::{NewRepoService, NewRepoServiceImpl, RepoService, RepoServiceImpl},
+        },
+        common::{
+            controller::{Response, ResponseT, Str},
+            infrastructure::{mysql::get_db_connection, postgresql::get_db, redis::get_redis_db},
+        },
+        controller::repo::repo_info_request::{ListQuery, RepoInfoRequest},
+        infrastructure::repositoryimpl::repo::repo_info::{NewRepoInfo, RepoInfoImpl},
+        utils::error::Result,
     },
-    common::{
-        controller::{Response, ResponseT, Str},
-        infrastructure::mysql::get_db_connection,
-        infrastructure::postgresql::get_db,
-    },
-    controller::repo::repo_info_request::{ListQuery, RepoInfoRequest},
-    infrastructure::repositoryimpl::repo::repo_info::NewRepoInfo,
-    infrastructure::repositoryimpl::repo::repo_info::RepoInfoImpl,
-    utils::error::Result,
+    actix_web::{web, Resource, Responder},
+    async_trait::async_trait,
+    redis::AsyncCommands,
+    std::sync::Arc,
 };
 
 #[derive(Debug)]

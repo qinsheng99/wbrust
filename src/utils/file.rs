@@ -1,6 +1,7 @@
-use serde::Deserialize;
-use std::error::Error;
-use std::fs;
+use {
+    serde::Deserialize,
+    std::{error::Error, fs},
+};
 
 #[allow(dead_code)]
 pub(crate) fn read_file(path: &str) -> Result<String, Box<dyn Error>> {

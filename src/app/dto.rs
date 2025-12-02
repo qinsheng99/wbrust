@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::{
     domain::repo_info::{ListRepoInfo, RepoInfo},
     utils::{
@@ -5,7 +7,6 @@ use crate::{
         time::{sub_now, timestamp_to_date},
     },
 };
-use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct RepoInfoDTO {

@@ -1,5 +1,7 @@
-use crate::app::dto::{CmdToListQuery, CmdToRepoInfo};
-use serde::{Deserialize, Serialize};
+use {
+    crate::app::dto::{CmdToListQuery, CmdToRepoInfo},
+    serde::{Deserialize, Serialize},
+};
 
 #[derive(Deserialize)]
 pub struct RepoInfoRequest {

@@ -1,6 +1,7 @@
-use std::arch::asm;
-
-use wbrust::{hm, make_answer, MyDerive, seac, show_streams};
+use {
+    std::arch::asm,
+    wbrust::{hm, make_answer, seac, show_streams, MyDerive},
+};
 
 fn main() {
     let o: u64;

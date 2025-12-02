@@ -1,7 +1,4 @@
-use async_trait::async_trait;
-use redis::SetOptions;
-
-use crate::utils::error::Result;
+use {crate::utils::error::Result, async_trait::async_trait, redis::SetOptions};
 
 #[allow(dead_code)]
 #[async_trait]

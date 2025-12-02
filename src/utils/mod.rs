@@ -3,8 +3,10 @@ pub mod file;
 pub mod time;
 pub mod utils;
 
-use regex::Regex;
-use std::fmt::{Display, Formatter};
+use {
+    regex::Regex,
+    std::fmt::{Display, Formatter},
+};
 
 #[derive(Debug)]
 pub struct Filter {

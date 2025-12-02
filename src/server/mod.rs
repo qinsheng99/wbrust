@@ -1,8 +1,10 @@
-use crate::{common::controller::middleware::Auth, controller as ctl, utils::error::Result};
+use {
+    actix_web::{middleware, App, HttpServer},
+    config::Config,
+    std::sync::{Arc, RwLock},
+};
 
-use actix_web::{middleware, App, HttpServer};
-use config::Config;
-use std::sync::{Arc, RwLock};
+use crate::{common::controller::middleware::Auth, controller as ctl, utils::error::Result};
 
 pub struct Server {
     config: Arc<RwLock<Config>>,

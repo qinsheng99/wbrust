@@ -1,7 +1,9 @@
-use actix_web::HttpResponse;
-use serde::{Deserialize, Serialize, Serializer};
-use serde::ser::SerializeStruct;
-use serde_json::Result as SerdeResult;
+use {
+    actix_web::HttpResponse,
+    serde::ser::SerializeStruct,
+    serde::{Deserialize, Serialize, Serializer},
+    serde_json::Result as SerdeResult,
+};
 
 pub mod middleware;
 

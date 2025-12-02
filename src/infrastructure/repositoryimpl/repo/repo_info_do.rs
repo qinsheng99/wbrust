@@ -1,12 +1,10 @@
+use {sqlx::types::uuid::Uuid, sqlx::FromRow};
+
 use crate::{
     app::dto::CmdToRepoInfo,
     domain::repo_info::RepoInfo,
     utils::{error::Result, time::now, utils::uuid_new},
 };
-
-use sqlx::types::uuid::Uuid;
-
-use sqlx::FromRow;
 
 const FREE: &'static str = "free";
 const TIME_OUT: i32 = 30;

@@ -1,8 +1,9 @@
-use std::sync::{Arc, RwLock};
-
-use config::{Config as Cfg, File, FileFormat};
-use serde::{Deserialize, Serialize};
-use serde_with_expand_env::with_expand_envs;
+use {
+    config::{Config as Cfg, File, FileFormat},
+    serde::{Deserialize, Serialize},
+    serde_with_expand_env::with_expand_envs,
+    std::sync::{Arc, RwLock},
+};
 
 use crate::utils::file::{read_file, read_file_to_yaml};
 

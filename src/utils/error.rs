@@ -1,21 +1,23 @@
-use std::convert::Infallible;
-use std::error::Error as libError;
-use std::fmt::{Debug, Display, Formatter};
-use std::io::Error as IoError;
-use std::num::{ParseFloatError, ParseIntError};
-use std::process;
-use std::sync::PoisonError;
-
-use actix_web::{HttpResponse, ResponseError};
-use config::ConfigError;
-use http::StatusCode;
-use redis::RedisError;
-use sea_orm::DbErr;
-use serde::{Deserialize, Serialize};
-use sqlx::error::Error as SqlxError;
-use sqlx::types::uuid::Error as SqlxUuidError;
-use thiserror::Error as ThisError;
-use uuid::Error as UuidError;
+use {
+    actix_web::{HttpResponse, ResponseError},
+    config::ConfigError,
+    http::StatusCode,
+    redis::RedisError,
+    sea_orm::DbErr,
+    serde::{Deserialize, Serialize},
+    sqlx::{error::Error as SqlxError, types::uuid::Error as SqlxUuidError},
+    std::{
+        convert::Infallible,
+        error::Error as libError,
+        fmt::{Debug, Display, Formatter},
+        io::Error as IoError,
+        num::{ParseFloatError, ParseIntError},
+        process,
+        sync::PoisonError,
+    },
+    thiserror::Error as ThisError,
+    uuid::Error as UuidError,
+};
 
 const RECORD_NOT_EXIST: &'static str = "record_not_exists";
 const SYSTEM_ERROR: &'static str = "system_error";

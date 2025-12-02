@@ -1,13 +1,13 @@
-use std::sync::{Arc, RwLock};
-
-use config::Config;
-use once_cell::sync::OnceCell;
-use redis::{
-    aio::MultiplexedConnection, Client, ConnectionAddr, ConnectionInfo, IntoConnectionInfo,
-    RedisResult,
+use {
+    crate::utils::error::{Error, Result},
+    config::Config,
+    once_cell::sync::OnceCell,
+    redis::{
+        aio::MultiplexedConnection, Client, ConnectionAddr, ConnectionInfo, IntoConnectionInfo,
+        RedisResult,
+    },
+    std::sync::{Arc, RwLock},
 };
-
-use crate::utils::error::{Error, Result};
 
 // pub type RedisDB = MultiplexedConnection;
 

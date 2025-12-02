@@ -1,18 +1,20 @@
 extern crate lazy_static;
 
-use std::sync::{Arc, RwLock};
+use {
+    clap::Parser,
+    config::Config,
+    lazy_static::lazy_static,
+    log::info,
+    std::sync::{Arc, RwLock},
+    tokio,
+};
 
-use clap::Parser;
-use config::Config;
-use lazy_static::lazy_static;
-use log::info;
-use tokio;
-
-use cfg::LocalConfig;
-use server::Server;
-use utils::error::Result;
-
-use crate::common::infrastructure::{mysql::init_mysql_db, postgresql::init_db, redis::init_redis};
+use {
+    crate::common::infrastructure::{mysql::init_mysql_db, postgresql::init_db, redis::init_redis},
+    cfg::LocalConfig,
+    server::Server,
+    utils::error::Result,
+};
 
 mod app;
 mod cfg;

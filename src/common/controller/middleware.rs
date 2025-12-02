@@ -1,20 +1,18 @@
-use actix_web::{
-    body::MessageBody,
-    dev::{Service, ServiceRequest, ServiceResponse, Transform},
-    Error,
+use {
+    actix_web::{
+        body::MessageBody,
+        dev::{Service, ServiceRequest, ServiceResponse, Transform},
+        Error,
+    },
+    http::HeaderValue,
+    std::{
+        cell::RefCell,
+        future::{ready, Future, Ready},
+        pin::Pin,
+        rc::Rc,
+        task::{Context, Poll},
+    },
 };
-
-use http::HeaderValue;
-
-use std::{
-    cell::RefCell,
-    future::{ready, Future, Ready},
-    pin::Pin,
-    rc::Rc,
-    task::{Context, Poll},
-};
-
-// use
 
 pub struct Auth;
 

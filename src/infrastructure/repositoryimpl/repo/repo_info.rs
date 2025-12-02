@@ -1,17 +1,17 @@
-use async_trait::async_trait;
-use sea_orm::{DatabaseConnection, EntityTrait};
-use sqlx::types::uuid;
-
-use crate::domain::repo_info::NewRepoInfoImpl;
-use crate::infrastructure::repositoryimpl::repo::dto;
-use crate::infrastructure::repositoryimpl::repo::repo_info_do::Total;
-use crate::utils::error::Error;
-use crate::{
-    app::dto::{CmdToListQuery, CmdToRepoInfo},
-    common::infrastructure::postgresql::PgDB,
-    domain::repo_info::{ListRepoInfo, RepoImpl, RepoInfo},
-    infrastructure::repositoryimpl::repo::repo_info_do::{to_repo_info_do, RepoInfoDO},
-    utils::error::Result,
+use {
+    crate::{
+        app::dto::{CmdToListQuery, CmdToRepoInfo},
+        common::infrastructure::postgresql::PgDB,
+        domain::repo_info::{ListRepoInfo, NewRepoInfoImpl, RepoImpl, RepoInfo},
+        infrastructure::repositoryimpl::repo::{
+            dto,
+            repo_info_do::{to_repo_info_do, RepoInfoDO, Total},
+        },
+        utils::error::{Error, Result},
+    },
+    async_trait::async_trait,
+    sea_orm::{DatabaseConnection, EntityTrait},
+    sqlx::types::uuid,
 };
 
 #[derive(Debug)]

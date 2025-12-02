@@ -1,8 +1,11 @@
-use async_trait::async_trait;
-use sqlx::types::uuid::Uuid;
-
-use crate::app::dto::{CmdToListQuery, CmdToRepoInfo};
-use crate::utils::error::Result;
+use {
+    crate::{
+        app::dto::{CmdToListQuery, CmdToRepoInfo},
+        utils::error::Result,
+    },
+    async_trait::async_trait,
+    sqlx::types::uuid::Uuid,
+};
 
 pub struct RepoInfo {
     pub uuid: Uuid,
