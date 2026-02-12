@@ -18,6 +18,18 @@ pub struct RepoInfo {
     pub modified_time: i64,
 }
 
+#[allow(dead_code)]
+pub struct RepoInfoModel {
+    pub id: u64,
+    pub owner: String,
+    pub repo: String,
+    pub branch: String,
+    pub status: String,
+    pub last_commit: String,
+    pub timeout: i32,
+    pub modified_time: u64,
+}
+
 #[derive(Default)]
 pub struct ListRepoInfo {
     pub repo_list: Vec<RepoInfo>,
@@ -35,6 +47,6 @@ pub trait RepoImpl: Send + Sync {
 #[async_trait]
 #[allow(dead_code)]
 pub trait NewRepoInfoImpl: Send + Sync {
-    async fn repo_detail_info_for_sea(&self, id: u64) -> Result<()>;
+    async fn repo_detail_info_for_sea(&self, id: u64) -> Result<RepoInfoModel>;
     async fn rq(&self) -> Result<()>;
 }

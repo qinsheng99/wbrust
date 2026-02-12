@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 
 use crate::{
-    app::dto::{CmdToListQuery, CmdToRepoInfo, RepoInfoDTO, RepoInfoListDTO},
+    app::dto::{CmdToListQuery, CmdToRepoInfo, RepoInfoDTO, RepoInfoListDTO, RepoInfoModelDTO},
     domain::repo_info::{NewRepoInfoImpl, RepoImpl},
     utils::error::Result,
 };
@@ -31,7 +31,7 @@ pub trait RepoServiceImpl: Send + Sync {
 
 #[async_trait]
 pub trait NewRepoServiceImpl: Send + Sync {
-    async fn repo_info(&self, id: u64) -> Result<()>;
+    async fn repo_info(&self, id: u64) -> Result<RepoInfoModelDTO>;
 }
 
 impl<T> RepoService<T>
@@ -81,9 +81,9 @@ impl<T> NewRepoServiceImpl for NewRepoService<T>
 where
     T: NewRepoInfoImpl + Sync,
 {
-    async fn repo_info(&self, id: u64) -> Result<()> {
-        let _ = self.s.repo_detail_info_for_sea(id).await?;
+    async fn repo_info(&self, id: u64) -> Result<RepoInfoModelDTO> {
+        let data = self.s.repo_detail_info_for_sea(id).await?;
 
-        Ok(())
+        RepoInfoModelDTO::from(data)
     }
 }

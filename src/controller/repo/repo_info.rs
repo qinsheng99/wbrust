@@ -1,7 +1,7 @@
 use {
     crate::{
         app::{
-            dto::{RepoInfoDTO, RepoInfoListDTO},
+            dto::{RepoInfoDTO, RepoInfoListDTO, RepoInfoModelDTO},
             repo_info::{NewRepoService, NewRepoServiceImpl, RepoService, RepoServiceImpl},
         },
         common::{
@@ -43,7 +43,7 @@ pub trait RepoCtl: Send + Sync {
 
 #[async_trait]
 pub trait NewRepoCtl: Send + Sync {
-    async fn repo_detail(&self, id: u64) -> Result<()>;
+    async fn repo_detail(&self, id: u64) -> Result<RepoInfoModelDTO>;
 }
 
 impl<T> RepoController<T>
@@ -93,9 +93,9 @@ impl<T> NewRepoCtl for NewRepoController<T>
 where
     T: NewRepoServiceImpl,
 {
-    async fn repo_detail(&self, id: u64) -> Result<()> {
-        self.service.repo_info(id).await?;
-        Ok(())
+    async fn repo_detail(&self, id: u64) -> Result<RepoInfoModelDTO> {
+        let data = self.service.repo_info(id).await?;
+        Ok(data)
     }
 }
 
@@ -119,8 +119,8 @@ async fn new_repo_detail(
     id: web::Path<u64>,
     ctl: web::Data<dyn NewRepoCtl>,
 ) -> Result<impl Responder> {
-    let _v = ctl.repo_detail(id.into_inner()).await?;
-    Ok(Response::new_success("s".to_string()).response_ok())
+    let v = ctl.repo_detail(id.into_inner()).await?;
+    Ok(Response::new_success(v).response_ok())
 }
 
 async fn test_redis() -> Result<()> {

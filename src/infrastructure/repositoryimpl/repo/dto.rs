@@ -1,4 +1,5 @@
 use {
+    crate::domain::repo_info::RepoInfoModel,
     sea_orm::entity::prelude::*,
     serde::{Deserialize, Serialize},
 };
@@ -21,3 +22,18 @@ pub struct Model {
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl From<Model> for RepoInfoModel {
+    fn from(model: Model) -> RepoInfoModel {
+        RepoInfoModel {
+            id: model.id,
+            owner: model.owner,
+            repo: model.repo,
+            branch: model.branch,
+            status: model.status,
+            last_commit: model.last_commit,
+            timeout: model.timeout,
+            modified_time: model.modified_time,
+        }
+    }
+}

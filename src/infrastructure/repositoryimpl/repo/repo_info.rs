@@ -2,7 +2,7 @@ use {
     crate::{
         app::dto::{CmdToListQuery, CmdToRepoInfo},
         common::infrastructure::postgresql::PgDB,
-        domain::repo_info::{ListRepoInfo, NewRepoInfoImpl, RepoImpl, RepoInfo},
+        domain::repo_info::{ListRepoInfo, NewRepoInfoImpl, RepoImpl, RepoInfo, RepoInfoModel},
         infrastructure::repositoryimpl::repo::{
             dto,
             repo_info_do::{to_repo_info_do, RepoInfoDO, Total},
@@ -114,14 +114,10 @@ impl RepoImpl for RepoInfoImpl {
 #[async_trait]
 #[allow(dead_code)]
 impl<'a> NewRepoInfoImpl for NewRepoInfo<'a> {
-    async fn repo_detail_info_for_sea(&self, id: u64) -> Result<()> {
+    async fn repo_detail_info_for_sea(&self, id: u64) -> Result<RepoInfoModel> {
         match dto::Entity::find_by_id(id).one(self.new_db).await? {
             None => Err(Error::NotFound),
-            Some(user) => {
-                println!("{:?}", user);
-
-                Ok(())
-            }
+            Some(user) => Ok(RepoInfoModel::from(user)),
         }
     }
 
